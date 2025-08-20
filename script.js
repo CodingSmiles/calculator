@@ -110,12 +110,13 @@ document.addEventListener("DOMContentLoaded", () => {
             else if (I10 >= 12 && E10 >= 150000) percent = 115;
         }
 
-        if (typeof percent === "number") {
-            result = E10 * (percent / 100);
-        }
+       if (typeof percent === "number") {
+    result = E10 * (percent / 100);
+    result = Math.round(result * 100) / 100; // round to 2 decimal places
+}
 
-        wpcValueEl.textContent = result;
-        wpcPercentEl.textContent = (typeof percent === "number") ? percent + "%" : "-";
+wpcValueEl.textContent = (typeof result === "number") ? result.toLocaleString("en-IN") : "-";
+wpcPercentEl.textContent = (typeof percent === "number") ? percent + "%" : "-";
     }
 
     categoryEl.addEventListener("change", calculateWPC);
