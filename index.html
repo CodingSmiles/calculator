@@ -1,0 +1,111 @@
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axis WPC Calculator</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="script.js"></script>
+</head>
+
+<body>
+
+    <div class="header-banner">
+        <div class="side-img">
+            <img src="imgs/calculator.png" alt="Calculator">
+        </div>
+        <div class="header-title">
+            <span class="highlight">AXIS</span> WPC Calculator
+        </div>
+        <div class="side-img">
+            <img src="imgs/logo.png" alt="Logo">
+        </div>
+    </div>
+
+    <div class="form-grid">
+        <div class="form-item">
+            <label for="option1">Category</label>
+            <select id="option1">
+                <option value="">Select...</option>
+                <option value="BRO">BRO</option>
+                <option value="BURG_NRI">BURGUNDY & NRI</option>
+                <option value="PBRM">PBRM</option>
+                <option value="BURG_PRIV">BURGUNDY PRIVATE</option>
+                <option value="SALES_EXEC">SALES EXECUTIVES</option>
+                <option value="AVC_SKY">AVC SKY & NR MYRTLE</option>
+            </select>
+        </div>
+
+        <div class="form-item">
+            <label for="option2">Plan Type</label>
+            <select id="option2">
+                <option value="">Select...</option>
+                <option value="PART">Participating</option>
+                <option value="NONPART">Non Participating</option>
+                <option value="ULIP">Unit Linked Insurance Plan</option>
+                <option value="TROP">TROP</option>
+                <option value="NONTROP">Non-TROP</option>
+                <option value="ULIP_SUPER">Unit Linked Insurance Plan (Super Solution)</option>
+            </select>
+        </div>
+
+        <div class="form-item">
+            <label for="amount">Premium:</label>
+            <div class="input-prefix">
+                <span>₹</span>
+                <input type="number" id="amount" placeholder="Enter Premium" />
+            </div>
+        </div>
+
+        <div class="form-item">
+            <label for="option4">PPT (In Years)</label>
+            <select id="option4">
+                <option value="">Select...</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+                <option value="7">7</option>
+                <option value="8">8</option>
+                <option value="9">9</option>
+                <option value="10">10</option>
+                <option value="11">11</option>
+                <option value="12">12</option>
+                <option value="13">13</option>
+                <option value="14">14</option>
+                <option value="15">15</option>
+                <option value="16">16</option>
+                <option value="17">17</option>
+                <option value="18">18</option>
+                <option value="19">19</option>
+                <option value="20">20</option>
+                <option value="21">21</option>
+                <option value="22">22</option>
+                <option value="23">23</option>
+                <option value="24">24</option>
+                <option value="25">25</option>
+                <option value="26">26</option>
+                <option value="27">27</option>
+                <option value="28">28</option>
+                <option value="29">29</option>
+                <option value="30">30</option>
+            </select>
+
+        </div>
+    </div>
+    <hr class="divider">
+
+
+    <div class="result-grid">
+        <div class="result-header">WPC</div>
+        <div class="result-header">WPC %</div>
+
+        <div class="result-value" id="wpcValue">-</div>
+        <div class="result-value" id="wpcPercent">-</div>
+    </div>
+
+</body>
+
+</html>
