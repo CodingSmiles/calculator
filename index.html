@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,14 +8,19 @@
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
 </head>
+
 <body>
-  <!-- Step 1: Ask User Info -->
+
   <div id="introPage" class="intro-container">
     <div class="intro-card">
       <h1 class="intro-title"><span class="highlight">AXIS</span> WPC Calculator</h1>
       <div class="form-item">
         <label for="userName">Your Name:</label>
         <input type="text" id="userName" placeholder="Enter your name" class="input-field">
+      </div>
+      <div class="form-item">
+        <label for="employeeID">Employee ID:</label>
+        <input type="text" id="employeeID" placeholder="Enter your Employee ID" class="input-field">
       </div>
       <div class="form-item">
         <label for="currentTarget">Current Achieved Target:</label>
@@ -35,7 +41,7 @@
     </div>
   </div>
 
-  <!-- Step 2: Calculator Section (Initially Hidden) -->
+
   <div id="calculatorPage" style="display:none;">
     <div class="calculator-container">
       <div class="header-banner">
@@ -89,4 +95,5 @@
     </div>
   </div>
 </body>
+
 </html>

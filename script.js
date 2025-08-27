@@ -3,6 +3,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const calculatorPage = document.getElementById("calculatorPage");
     const startBtn = document.getElementById("startBtn");
     const userNameEl = document.getElementById("userName");
+    const employeeIDEl = document.getElementById("employeeID"); // <-- make sure you have this input in HTML
     const currentTargetEl = document.getElementById("currentTarget");
     const numPoliciesEl = document.getElementById("numPolicies");
     const welcomeMessage = document.getElementById("welcomeMessage");
@@ -31,13 +32,47 @@ document.addEventListener("DOMContentLoaded", () => {
 
     startBtn.addEventListener("click", () => {
         const name = userNameEl.value.trim();
+        const employeeID = employeeIDEl.value.trim();
         const numPolicies = parseInt(numPoliciesEl.value);
         currentTarget = parseFloat(currentTargetEl.value) || 0;
 
-        if (!name || !numPolicies) {
-            alert("Please enter your name and select number of policies.");
+        if (!name || !employeeID || !numPolicies) {
+            alert("Please enter your name, employee ID and select number of policies.");
             return;
         }
+
+        // --- Airtable save (added part) ---
+        fetch("https://api.airtable.com/v0/app5nV3Y1Wv8AJGZV/tbl8MQJZ9b0RlEnso", {
+            method: "POST",
+            headers: {
+                "Authorization": "Bearer patNS2S4xcYdiUkAd.6367601a072926d8e64bcbd27d37f2e504dd50fbff9e21a83ba8be27f7ab41c6",
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                records: [
+                    {
+                        fields: {
+                            "fldyUDMDFno06AKQJ": name,       // Name field
+                            "fldlKmOW0yP5qhPzm": employeeID  // Employee ID field
+                        }
+                    }
+                ]
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            if (data.error) {
+                console.error("Airtable error:", data.error);
+                alert("Failed to save data to Airtable: " + data.error.message);
+            } else {
+                console.log("Saved to Airtable:", data);
+            }
+        })
+        .catch(err => {
+            console.error("Fetch error:", err);
+            alert("Failed to connect to Airtable. Proceeding anyway.");
+        });
+        // --- end Airtable save ---
 
         // Switch to calculator page
         introPage.style.display = "none";
@@ -111,6 +146,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Attach calculator logic
         attachCalculators();
     });
+
+    // ... rest of your code unchanged (attachCalculators, updateTotalAndShortfalls)
 
     function attachCalculators() {
         const policyBlocks = document.querySelectorAll(".policy-block");
