@@ -8,13 +8,17 @@
   <script src="script.js" defer></script>
 </head>
 <body>
-
+  <!-- Step 1: Ask User Info -->
   <div id="introPage" class="intro-container">
     <div class="intro-card">
-      <h1 class="intro-title"><span class="highlight"">AXIS</span> WPC Calculator</h1>
+      <h1 class="intro-title"><span class="highlight">AXIS</span> WPC Calculator</h1>
       <div class="form-item">
         <label for="userName">Your Name:</label>
         <input type="text" id="userName" placeholder="Enter your name" class="input-field">
+      </div>
+      <div class="form-item">
+        <label for="currentTarget">Current Achieved Target:</label>
+        <input type="number" id="currentTarget" placeholder="Enter current target" class="input-field">
       </div>
       <div class="form-item">
         <label for="numPolicies">Number of Policies:</label>
@@ -31,29 +35,57 @@
     </div>
   </div>
 
-
+  <!-- Step 2: Calculator Section (Initially Hidden) -->
   <div id="calculatorPage" style="display:none;">
-    <div class="header-banner">
-      <div class="side-img">
-        <img src="imgs/calculator.png" alt="Calculator">
+    <div class="calculator-container">
+      <div class="header-banner">
+        <div class="side-img">
+          <img src="imgs/calculator.png" alt="Calculator">
+        </div>
+        <div class="header-title">
+          <span class="highlight">AXIS</span> WPC Calculator
+        </div>
+        <div class="side-img">
+          <img src="imgs/logo.png" alt="Logo">
+        </div>
       </div>
-      <div class="header-title">
-        <span class="highlight">AXIS</span> WPC Calculator
+
+      <h3 id="welcomeMessage" class="welcome-message"></h3>
+
+      <div id="policiesContainer" class="policies-container"></div>
+
+      <hr class="divider">
+
+      <div class="result-card">
+        <div class="table-container">
+          <table class="result-table">
+            <thead>
+              <tr>
+                <th>Total WPC</th>
+                <th>Final Target</th>
+                <th>India Target</th>
+                <th>India Shortfall</th>
+                <th>Manila Target</th>
+                <th>Manila Shortfall</th>
+                <th>Paris Target</th>
+                <th>Paris Shortfall</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td id="totalWPC">-</td>
+                <td id="finalTarget">-</td>
+                <td id="indiaTarget">-</td>
+                <td id="indiaShortfall">-</td>
+                <td id="manilaTarget">-</td>
+                <td id="manilaShortfall">-</td>
+                <td id="parisTarget">-</td>
+                <td id="parisShortfall">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="side-img">
-        <img src="imgs/logo.png" alt="Logo">
-      </div>
-    </div>
-
-    <h3 id="welcomeMessage" class="welcome-message"></h3>
-
-    <div id="policiesContainer" class="policies-container"></div>
-
-    <hr class="divider">
-
-    <div class="result-card">
-      <div class="result-header">Total Accumulative WPC</div>
-      <div class="result-value" id="totalWPC">-</div>
     </div>
   </div>
 </body>

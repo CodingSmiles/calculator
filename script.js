@@ -3,33 +3,59 @@ document.addEventListener("DOMContentLoaded", () => {
     const calculatorPage = document.getElementById("calculatorPage");
     const startBtn = document.getElementById("startBtn");
     const userNameEl = document.getElementById("userName");
+    const currentTargetEl = document.getElementById("currentTarget");
     const numPoliciesEl = document.getElementById("numPolicies");
     const welcomeMessage = document.getElementById("welcomeMessage");
     const policiesContainer = document.getElementById("policiesContainer");
     const totalWPCEl = document.getElementById("totalWPC");
+    const finalTargetEl = document.getElementById("finalTarget");
+    const indiaTargetEl = document.getElementById("indiaTarget");
+    const indiaShortfallEl = document.getElementById("indiaShortfall");
+    const manilaTargetEl = document.getElementById("manilaTarget");
+    const manilaShortfallEl = document.getElementById("manilaShortfall");
+    const parisTargetEl = document.getElementById("parisTarget");
+    const parisShortfallEl = document.getElementById("parisShortfall");
+
+    let selectedCategory = "";
+    let currentTarget = 0;
+
+    // Requirements table
+    const requirements = {
+        "BRO": { india: 650000, manila: 1100000, paris: 2500000 },
+        "BURG_NRI": { india: 1500000, manila: 2400000, paris: 5800000 },
+        "PBRM": { india: 1300000, manila: 2000000, paris: 4500000 },
+        "BURG_PRIV": { india: 1700000, manila: 2500000, paris: 6000000 },
+        "SALES_EXEC": { india: 600000, manila: 100000, paris: 2200000 },
+        "AVC_SKY": { india: 3400000, manila: 5000000, paris: 12000000 }
+    };
 
     startBtn.addEventListener("click", () => {
         const name = userNameEl.value.trim();
         const numPolicies = parseInt(numPoliciesEl.value);
+        currentTarget = parseFloat(currentTargetEl.value) || 0;
 
         if (!name || !numPolicies) {
             alert("Please enter your name and select number of policies.");
             return;
         }
 
+        // Switch to calculator page
         introPage.style.display = "none";
         calculatorPage.style.display = "block";
         welcomeMessage.textContent = `Hello ${name}, please enter details for ${numPolicies} policy(ies).`;
 
+        // Clear previous content
+        policiesContainer.innerHTML = "";
+
+        // Create policy blocks
         for (let i = 1; i <= numPolicies; i++) {
             const policyDiv = document.createElement("div");
             policyDiv.classList.add("policy-block");
-            policyDiv.innerHTML = `
-              <h3>Policy ${i}</h3>
-              <div class="form-grid">
+            const isFirstBlock = i === 1;
+            const categoryInput = `
                 <div class="form-item">
                   <label>Category</label>
-                  <select class="category">
+                  <select class="category${!isFirstBlock ? ' greyed-out' : ''}" ${!isFirstBlock ? 'disabled' : ''}>
                       <option value="">Select...</option>
                       <option value="BRO">BRO</option>
                       <option value="BURG_NRI">BURGUNDY & NRI</option>
@@ -39,7 +65,11 @@ document.addEventListener("DOMContentLoaded", () => {
                       <option value="AVC_SKY">AVC SKY & NR MYRTLE</option>
                   </select>
                 </div>
-
+            `;
+            policyDiv.innerHTML = `
+              <h3>Policy ${i}</h3>
+              <div class="form-grid">
+                ${categoryInput}
                 <div class="form-item">
                   <label>Plan Type</label>
                   <select class="planType">
@@ -52,7 +82,6 @@ document.addEventListener("DOMContentLoaded", () => {
                       <option value="ULIP_SUPER">Unit Linked Insurance Plan (Super Solution)</option>
                   </select>
                 </div>
-
                 <div class="form-item">
                   <label>Premium</label>
                   <div class="input-prefix">
@@ -60,7 +89,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input type="number" class="amount" placeholder="Enter Premium">
                   </div>
                 </div>
-
                 <div class="form-item">
                   <label>PPT (In Years)</label>
                   <select class="ppt">
@@ -69,8 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   </select>
                 </div>
               </div>
-
-              <div class="result-grid">
+              <div class="form-grid">
                 <div class="result-header">WPC</div>
                 <div class="result-header">WPC %</div>
                 <div class="result-value wpcValue">-</div>
@@ -81,13 +108,35 @@ document.addEventListener("DOMContentLoaded", () => {
             policiesContainer.appendChild(policyDiv);
         }
 
+        // Attach calculator logic
         attachCalculators();
     });
 
     function attachCalculators() {
         const policyBlocks = document.querySelectorAll(".policy-block");
 
-        policyBlocks.forEach(block => {
+        // Attach event listener to the first policy block's category dropdown
+        const firstCategoryEl = policyBlocks[0]?.querySelector(".category");
+        if (firstCategoryEl) {
+            firstCategoryEl.addEventListener("input", () => {
+                selectedCategory = firstCategoryEl.value.trim();
+                // Update category selection in all subsequent policy blocks
+                policyBlocks.forEach((block, index) => {
+                    if (index > 0) {
+                        const categorySelect = block.querySelector(".category");
+                        if (categorySelect) {
+                            categorySelect.value = selectedCategory || "";
+                        }
+                    }
+                    // Trigger calculation for all blocks when category changes
+                    calculateWPC(block);
+                });
+                // Update shortfalls after category change
+                updateTotalAndShortfalls();
+            });
+        }
+
+        policyBlocks.forEach((block, index) => {
             const categoryEl = block.querySelector(".category");
             const planTypeEl = block.querySelector(".planType");
             const amountEl = block.querySelector(".amount");
@@ -96,7 +145,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const wpcPercentEl = block.querySelector(".wpcPercent");
 
             function calculateWPC() {
-                const category = categoryEl.value.trim();
+                const category = index === 0 ? categoryEl?.value.trim() : selectedCategory;
                 const planType = planTypeEl.value.trim();
                 const E10 = parseFloat(amountEl.value) || null;
                 const I10 = parseInt(pptEl.value) || null;
@@ -108,10 +157,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (!category || !planType || !E10 || !I10) {
                     wpcValueEl.textContent = "-";
                     wpcPercentEl.textContent = "-";
-                    updateTotal();
+                    updateTotalAndShortfalls();
                     return;
                 }
 
+                // Calculation logic (unchanged)
                 if (["BROParticipating", "BURG_NRIParticipating", "PBRMParticipating",
                     "BURG_PRIVParticipating", "SALES_EXECParticipating",
                     "AVC_SKYParticipating"].includes(M3)) {
@@ -128,10 +178,9 @@ document.addEventListener("DOMContentLoaded", () => {
                     else if (I10 >= 12 && E10 <= 149000) percent = 100;
                     else if (I10 >= 12 && E10 >= 15000) percent = 125;
                 }
-
-                else if (["BRONONPART", "BURG_NRINONPART", "PBRMNONPART",
-                    "BURG_PRIVNONPART", "SALES_EXECNONPART",
-                    "AVC_SKYNONPART"].includes(M3)) {
+                else if (["BRONonParticipating", "BURG_NRINonParticipating", "PBRMNonParticipating",
+                    "BURG_PRIVNonParticipating", "SALES_EXECNonParticipating",
+                    "AVC_SKYNonParticipating"].includes(M3)) {
                     if (I10 <= 6 && E10 <= 89000) percent = 50;
                     else if (I10 <= 6 && E10 <= 149000) percent = 60;
                     else if (I10 <= 6 && E10 >= 15000) percent = 70;
@@ -145,45 +194,37 @@ document.addEventListener("DOMContentLoaded", () => {
                     else if (I10 >= 12 && E10 <= 149000) percent = 110;
                     else if (I10 >= 12 && E10 >= 15000) percent = 135;
                 }
-
                 else if (M3 === "BROULIP") {
                     percent = (E10 < 250000) ? 10 : 15;
                 }
-
                 else if (["BROTROP", "BURG_NRITROP", "PBRMTROP",
                     "BURG_PRIVTROP", "SALES_EXECTROP",
                     "AVC_SKYTROP"].includes(M3)) {
                     if (E10 < 5000) percent = 150;
                 }
-
-                else if (["BRONONTROP", "BURG_NRINONTROP", "PBRMNONTROP",
-                    "BURG_PRIVNONTROP", "SALES_EXECNONTROP",
-                    "AVC_SKYNONTROP"].includes(M3)) {
+                else if (["BRONonTROP", "BURG_NRINonTROP", "PBRMNonTROP",
+                    "BURG_PRIVNonTROP", "SALES_EXECNonTROP",
+                    "AVC_SKYNonTROP"].includes(M3)) {
                     if (E10 < 5000) percent = 100;
                 }
-
                 else if (M3 === "BURG_NRIULIP") {
                     if (E10 < 500000) percent = 20;
                     else if (E10 < 750000) percent = 30;
                     else percent = 40;
                 }
-
                 else if (M3 === "BURG_PRIVULIP") {
                     if (E10 < 1500000) percent = 25;
                     else if (E10 < 3000000) percent = 35;
                     else percent = 45;
                 }
-
                 else if (M3 === "SALES_EXECULIP") {
                     percent = (E10 < 250000) ? 10 : 15;
                 }
-
                 else if (M3 === "AVC_SKYULIP") {
                     if (E10 < 190000) percent = 20;
                     else if (E10 < 250000) percent = 30;
                     else percent = 40;
                 }
-
                 else if (M3 === "AVC_SKYULIP_SUPER") {
                     if (I10 <= 6 && E10 <= 89000) percent = 40;
                     else if (I10 <= 6 && E10 <= 149000) percent = 50;
@@ -201,27 +242,65 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (typeof percent === "number") {
                     result = E10 * (percent / 100);
-                    result = Math.round(result * 100) / 100;
+                    result = Math.round(result * 100) / 100; // 2 decimal places
                 }
 
                 wpcValueEl.textContent = (typeof result === "number") ? result.toLocaleString("en-IN") : "-";
                 wpcPercentEl.textContent = (typeof percent === "number") ? percent + "%" : "-";
 
-                updateTotal();
+                updateTotalAndShortfalls();
             }
 
-            [categoryEl, planTypeEl, amountEl, pptEl].forEach(el =>
+            // Attach input listeners to planType, amount, and ppt
+            [planTypeEl, amountEl, pptEl].forEach(el =>
                 el.addEventListener("input", calculateWPC)
             );
+
+            // For the first block, also listen to category changes
+            if (index === 0 && categoryEl) {
+                categoryEl.addEventListener("input", calculateWPC);
+            } else {
+                // Trigger initial calculation for non-first blocks
+                calculateWPC();
+            }
         });
     }
 
-    function updateTotal() {
-        let total = 0;
+    function updateTotalAndShortfalls() {
+        let totalWPC = 0;
         document.querySelectorAll(".policy-block .wpcValue").forEach(el => {
             const val = el.textContent.replace(/,/g,"");
-            if (!isNaN(val) && val !== "-") total += parseFloat(val);
+            if (!isNaN(val) && val !== "-") totalWPC += parseFloat(val);
         });
-        totalWPCEl.textContent = total ? total.toLocaleString("en-IN") : "-";
+
+        // Update Total Accumulative WPC
+        totalWPCEl.textContent = totalWPC ? totalWPC.toLocaleString("en-IN") : "-";
+
+        // Calculate Final Target (Current Target + Total WPC)
+        const finalTarget = currentTarget + totalWPC;
+        finalTargetEl.textContent = finalTarget ? finalTarget.toLocaleString("en-IN") : "-";
+
+        // Update targets and shortfalls based on selected category
+        if (selectedCategory && requirements[selectedCategory]) {
+            const req = requirements[selectedCategory];
+            indiaTargetEl.textContent = req.india.toLocaleString("en-IN");
+            manilaTargetEl.textContent = req.manila.toLocaleString("en-IN");
+            parisTargetEl.textContent = req.paris.toLocaleString("en-IN");
+
+            const indiaShortfall = req.india - finalTarget;
+            const manilaShortfall = req.manila - finalTarget;
+            const parisShortfall = req.paris - finalTarget;
+
+            indiaShortfallEl.textContent = indiaShortfall >= 0 ? indiaShortfall.toLocaleString("en-IN") : "0";
+            manilaShortfallEl.textContent = manilaShortfall >= 0 ? manilaShortfall.toLocaleString("en-IN") : "0";
+            parisShortfallEl.textContent = parisShortfall >= 0 ? parisShortfall.toLocaleString("en-IN") : "0";
+        } else {
+            indiaTargetEl.textContent = "-";
+            indiaShortfallEl.textContent = "-";
+            manilaTargetEl.textContent = "-";
+            manilaShortfallEl.textContent = "-";
+            parisTargetEl.textContent = "-";
+            parisShortfallEl.textContent = "-";
+        }
     }
 });
