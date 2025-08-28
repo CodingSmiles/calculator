@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       <option value="NonParticipating">Non Participating</option>
                       <option value="ULIP">Unit Linked Insurance Plan</option>
                       <option value="TROP">TROP</option>
-                      <option value="NonTROP">Non-TROP</option>
+                      <option value="NonTROP">Non-Term</option>
                       <option value="ULIP_SUPER">Unit Linked Insurance Plan (Super Solution)</option>
                   </select>
                 </div>
@@ -388,7 +388,7 @@ document.addEventListener("DOMContentLoaded", () => {
             pdf.text(`Premium: ${premium}`, 15, yOffset); yOffset += lineHeight;
             pdf.text(`WPC: ${wpc}`, 15, yOffset); yOffset += lineHeight;
             pdf.text(`WPC %: ${wpcPercent}`, 15, yOffset); yOffset += lineHeight * 2;
-        }); 
+        });
 
 
         // 4. Add results table if available
