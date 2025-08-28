@@ -347,19 +347,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // 1. Add heading
         pdf.setFontSize(14);
-        pdf.text("WPC Calculator Report", 10, yOffset);
+        pdf.text(`WPC Calculator for: ${userName}`, 10, yOffset);
         yOffset += lineHeight * 2;
 
-        // 2. Add policies text in pointer format
         const policies = document.querySelectorAll("#policiesContainer .policy-block");
         pdf.setFontSize(12);
         pdf.text("Policies:", 10, yOffset);
         yOffset += lineHeight;
 
-        policies.forEach((p, i) => {
-            const categoryEl = p.querySelector(".category");
-            const category = categoryEl ? categoryEl.options[categoryEl.selectedIndex]?.text : "-";
+        // ✅ Get the first category only
+        let firstCategory = "-";
+        if (policies.length > 0) {
+            const firstCategoryEl = policies[0].querySelector(".category");
+            firstCategory = firstCategoryEl ? firstCategoryEl.options[firstCategoryEl.selectedIndex]?.text : "-";
+        }
 
+        policies.forEach((p, i) => {
             const planTypeEl = p.querySelector(".planType");
             const planType = planTypeEl ? planTypeEl.options[planTypeEl.selectedIndex]?.text : "-";
 
@@ -367,7 +370,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const premium = p.querySelector(".amount")?.value || "-";
             const wpc = p.querySelector(".wpcValue")?.innerText || "-";
             const wpcPercent = p.querySelector(".wpcPercent")?.innerText || "-";
-
 
             if (yOffset > pageHeight) {
                 pdf.addPage();
@@ -379,13 +381,14 @@ document.addEventListener("DOMContentLoaded", () => {
             pdf.setFont(undefined, "normal");
             yOffset += lineHeight;
 
-            pdf.text(`Category: ${category}`, 15, yOffset); yOffset += lineHeight;
+            // ✅ Always use the first policy's category
+            pdf.text(`Category: ${firstCategory}`, 15, yOffset); yOffset += lineHeight;
             pdf.text(`Plan Type: ${planType}`, 15, yOffset); yOffset += lineHeight;
             pdf.text(`PPT (In Years): ${ppt}`, 15, yOffset); yOffset += lineHeight;
             pdf.text(`Premium: ${premium}`, 15, yOffset); yOffset += lineHeight;
             pdf.text(`WPC: ${wpc}`, 15, yOffset); yOffset += lineHeight;
             pdf.text(`WPC %: ${wpcPercent}`, 15, yOffset); yOffset += lineHeight * 2;
-        });
+        }); 
 
 
         // 4. Add results table if available
@@ -398,6 +401,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
             pdf.autoTable({
                 head: [headers],
+                headStyles: {
+                    fillColor: [136, 26, 68],
+                    textColor: [255, 255, 255]
+                },
                 body: rows,
                 startY: yOffset,
                 styles: { fontSize: 10, cellPadding: 2 },
