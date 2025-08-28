@@ -26,14 +26,13 @@ body {
 .intro-card {
     background: #ffffff;
     border-radius: 20px;
-    padding: 3.5rem;
+    padding: 2rem;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.07);
     max-width: 600px;
-    width: 100%;
+    width: calc(100% - 2rem);
     text-align: center;
     animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-    margin-left: 2rem;
-    margin-right: 2rem;
+    margin: 0 auto; /* Centered */
     border: 1px solid rgba(0, 0, 0, 0.03);
     transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
@@ -64,7 +63,7 @@ body {
 }
 
 .form-item {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -76,16 +75,16 @@ body {
     font-size: 1.1rem;
     font-weight: 600;
     color: black;
-    margin-bottom: 0.75rem;
+    margin-bottom: 0.5rem;
     width: 100%;
-    max-width: 300px;
+    max-width: 100%;
     transition: color 0.3s ease;
 }
 
 .input-field {
     width: 100%;
-    max-width: 300px;
-    padding: 0.9rem 1.25rem;
+    max-width: 100%;
+    padding: 0.8rem 1rem;
     border: 1px solid #d8dfe6;
     border-radius: 12px;
     font-size: 1rem;
@@ -112,14 +111,14 @@ body {
     color: #ffffff;
     border: none;
     border-radius: 12px;
-    padding: 0.9rem 2.5rem;
+    padding: 0.8rem 2rem;
     font-size: 1.1rem;
     font-weight: 600;
     font-family: 'Inter', system-ui, sans-serif;
     cursor: pointer;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     width: 100%;
-    max-width: 300px;
+    max-width: 100%;
 }
 
 .btn-primary:hover {
@@ -133,7 +132,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 2.5rem;
+    padding: 2rem;
     background: linear-gradient(135deg, #e6f3ff 0%, #c4e0ff 100%);
     transition: background 0.5s ease-in-out;
 }
@@ -141,12 +140,11 @@ body {
 .calculator-container {
     background: #ffffff;
     border-radius: 20px;
-    padding: 2.5rem;
+    padding: 2rem;
     box-shadow: 0 12px 40px rgba(0, 0, 0, 0.07);
-    max-width: 1500px;
-    width: calc(100% - 4rem);
-    margin-left: auto;
-    margin-right: auto;
+    max-width: 100%; /* Changed from 1200px */
+    width: 100%; /* Changed from calc(100% - 2rem) */
+    margin: 0 auto; /* Centered */
     border: 1px solid rgba(0, 0, 0, 0.03);
     transition: transform 0.4s ease, box-shadow 0.4s ease;
 }
@@ -161,17 +159,17 @@ body {
     align-items: center;
     justify-content: center;
     background: #d1e8f3;
-    padding: 1rem 2rem;
+    padding: 1rem 1.5rem;
     border-radius: 12px;
     flex-wrap: wrap;
-    max-width: 1500px;
+    max-width: 100%;
     width: 100%;
     transition: background 0.3s ease;
 }
 
 .header-banner img {
     height: auto;
-    width: clamp(80px, 12vw, 160px);
+    width: clamp(60px, 10vw, 120px);
     max-width: 100%;
     object-fit: contain;
     transition: transform 0.3s ease;
@@ -185,26 +183,26 @@ body {
     font-family: 'Inter', system-ui, sans-serif;
     flex: 1;
     text-align: center;
-    font-size: clamp(1.5rem, 3vw, 2.5rem);
+    font-size: clamp(1.5rem, 2.5vw, 2rem);
     font-weight: 700;
     color: black;
-    letter-spacing: 1.5px;
-    margin: 0 1.5rem;
+    letter-spacing: 1px;
+    margin: 0 1rem;
 }
 
 .header-banner .side-img img {
-    width: clamp(50px, 8vw, 150px);
+    width: clamp(40px, 6vw, 100px);
     height: auto;
     object-fit: contain;
     max-width: 100%;
 }
 
 .policy-block {
-    margin: 2.5rem auto;
-    padding: 1.75rem;
+    margin: 2rem auto; /* Centered */
+    padding: 1.5rem;
     border: 1px solid #d8dfe6;
     border-radius: 16px;
-    max-width: 900px;
+    max-width: 100%;
     width: 100%;
     background: #f9fafc;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -218,19 +216,19 @@ body {
 .form-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 1.75rem 4rem;
-    max-width: 800px;
+    gap: 1.5rem 2rem;
+    max-width: 100%;
     width: 100%;
-    margin: 2.5rem auto;
+    margin: 2rem auto; /* Centered */
     justify-content: center;
 }
 
 .form-item {
     display: flex;
     flex-direction: column;
-    gap: 0.75rem;
+    gap: 0.5rem;
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 1.5rem;
+    font-size: 1.3rem;
 }
 
 .form-item label {
@@ -241,11 +239,11 @@ body {
 
 .form-item select {
     width: 100%;
-    max-width: 300px;
-    padding: 0.75rem 1rem;
+    max-width: 100%;
+    padding: 0.7rem 0.9rem;
     border-radius: 8px;
     border: 1px solid #d8dfe6;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-family: 'Inter', system-ui, sans-serif;
     background: #f9fafc;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -281,7 +279,7 @@ body {
     border: 1px solid #d8dfe6;
     border-radius: 8px;
     overflow: hidden;
-    max-width: 300px;
+    max-width: 100%;
     background: #fff;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -293,8 +291,8 @@ body {
 
 .input-prefix span {
     background: #f0f2f5;
-    padding: 0.75rem 1rem;
-    font-size: 1.2rem;
+    padding: 0.7rem 0.9rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: #881c44;
     border-right: 1px solid #d8dfe6;
@@ -305,8 +303,8 @@ body {
     border: none;
     outline: none;
     flex: 1;
-    font-size: 1.2rem;
-    padding: 0.75rem 1rem;
+    font-size: 1.1rem;
+    padding: 0.7rem 0.9rem;
     font-family: 'Inter', system-ui, sans-serif;
     background: #f9fafc;
     transition: background 0.3s ease;
@@ -317,7 +315,7 @@ body {
 }
 
 .divider {
-    margin: 4rem auto;
+    margin: 3rem auto;
     width: 50%;
     border: 0;
     border-top: 1px solid #d8dfe6;
@@ -326,29 +324,29 @@ body {
 
 .result-grid {
     display: grid;
-    grid-template-columns: repeat(2, minmax(120px, 1fr));
-    gap: 1.5rem;
-    max-width: 400px;
+    grid-template-columns: repeat(2, minmax(100px, 1fr));
+    gap: 1.2rem;
+    max-width: 100%;
     width: 100%;
-    margin: 2.5rem auto;
+    margin: 2rem auto;
     text-align: center;
     font-family: 'Inter', system-ui, sans-serif;
 }
 
 .result-header {
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: black;
     border-bottom: 2px solid #b0b8c1;
-    padding-bottom: 0.75rem;
+    padding-bottom: 0.5rem;
     transition: color 0.3s ease;
 }
 
 .result-value {
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 700;
     color: black;
-    padding-top: 0.75rem;
+    padding-top: 0.5rem;
 }
 
 .result-card {
@@ -356,9 +354,9 @@ body {
     flex-direction: column;
     align-items: center;
     width: 100%;
-    max-width: 1200px; /* Increased width */
-    margin: 2.5rem auto;
-    padding: 2.5rem; /* Increased padding for taller card */
+    max-width: 100%;
+    margin: 2rem auto;
+    padding: 2rem;
     background: #f9fafc;
     border: 1px solid #d8dfe6;
     border-radius: 16px;
@@ -372,14 +370,14 @@ body {
 
 .table-container {
     width: 100%;
-    max-width: 100%; /* Ensure it fits within result-card */
+    max-width: 100%;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
 }
 
 .result-table {
     width: 100%;
-    min-width: 900px; /* Increased to reduce scrolling need */
+    min-width: 600px;
     border-collapse: collapse;
     font-family: 'Inter', system-ui, sans-serif;
     background: #ffffff;
@@ -389,11 +387,11 @@ body {
 }
 
 .result-table th, .result-table td {
-    padding: 0.6rem; /* Reduced padding for compactness */
+    padding: 0.5rem;
     text-align: center;
     border: 1px solid #d8dfe6;
-    font-size: 1.1rem; /* Slightly smaller font for better fit */
-    white-space: nowrap; /* Prevents text wrapping */
+    font-size: 1rem;
+    white-space: nowrap;
 }
 
 .result-table th {
@@ -416,11 +414,11 @@ body {
 #welcomeMessage {
     text-align: center;
     font-family: 'Inter', system-ui, sans-serif;
-    font-size: 1.6rem;
+    font-size: 1.5rem;
     font-weight: 600;
     color: black;
-    margin: 2rem auto;
-    max-width: 900px;
+    margin: 1.5rem auto;
+    max-width: 100%;
     width: 100%;
     opacity: 0;
     animation: fadeIn 0.8s cubic-bezier(0.4, 0, 0.2, 1) forwards;
@@ -441,14 +439,15 @@ body {
 @media (max-width: 768px) {
     .intro-container,
     #calculatorPage {
-        padding: 1.5rem;
+        padding: 1rem;
     }
 
     .intro-card,
     .calculator-container {
-        padding: 2rem;
-        margin-left: 1rem;
-        margin-right: 1rem;
+        padding: 1rem; /* Further reduced for mobile */
+        margin: 0 auto; /* Centered */
+        width: 100%; /* Full width */
+        max-width: 100%;
     }
 
     .intro-title {
@@ -462,78 +461,95 @@ body {
     .header-banner {
         flex-direction: column;
         text-align: center;
-        padding: 0.75rem;
-        margin-left: 1rem;
-        margin-right: 1rem;
+        padding: 0.5rem;
+        margin: 0 auto; /* Centered */
+        width: 100%;
     }
 
     .header-title {
-        margin: 0.75rem 0;
-        font-size: 1.75rem;
+        margin: 0.5rem 0;
+        font-size: 1.5rem;
     }
 
     .header-banner .side-img img {
-        width: 60px;
+        width: 50px;
     }
 
     .policy-block {
-        margin-left: 1rem;
-        margin-right: 1rem;
-        padding: 1.25rem;
+        margin: 1.5rem auto; /* Centered, override left/right margins */
+        padding: 1rem;
+        width: 100%;
+        max-width: 100%;
     }
 
     .form-grid {
         grid-template-columns: 1fr;
-        gap: 1.25rem;
-        margin-left: 1rem;
-        margin-right: 1rem;
+        gap: 1rem;
+        margin: 1.5rem auto; /* Centered */
+        width: 100%;
+        max-width: 100%;
     }
 
     .form-item {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
 
     .form-item select,
     .input-prefix {
         max-width: 100%;
+        font-size: 1rem;
+        padding: 0.6rem 0.8rem;
+    }
+
+    .input-prefix span {
+        font-size: 1rem;
+        padding: 0.6rem 0.8rem;
+    }
+
+    .input-prefix input {
+        font-size: 1rem;
+        padding: 0.6rem 0.8rem;
     }
 
     .divider {
         width: 80%;
-        margin: 2.5rem auto;
+        margin: 2rem auto;
     }
 
     .result-grid {
         grid-template-columns: 1fr 1fr;
-        gap: 1rem;
+        gap: 0.8rem;
         max-width: 100%;
-        margin-left: 1rem;
-        margin-right: 1rem;
+        margin: 1.5rem auto; /* Centered */
     }
 
     .result-header {
-        font-size: 1.2rem;
+        font-size: 1.1rem;
     }
 
     .result-value {
-        font-size: 1.4rem;
+        font-size: 1.3rem;
     }
 
     .result-card {
         max-width: 100%;
-        margin: 2.5rem auto;
-        padding: 2rem; /* Adjusted padding */
+        margin: 1.5rem auto;
+        padding: 1rem; /* Further reduced */
+    }
+
+    .result-table {
+        min-width: 500px;
     }
 
     .result-table th, .result-table td {
-        font-size: 0.9rem; /* Smaller font for smaller screens */
-        padding: 0.5rem;
+        font-size: 0.85rem;
+        padding: 0.4rem;
     }
 
     #welcomeMessage {
-        font-size: 1.4rem;
-        margin-left: 1rem;
-        margin-right: 1rem;
+        font-size: 1.3rem;
+        margin: 1rem auto; /* Centered */
+        width: 100%;
     }
 }
 
@@ -546,47 +562,84 @@ body {
         font-size: 1rem;
     }
 
+    .intro-card,
+    .calculator-container {
+        padding: 0.75rem; /* Further reduced */
+        margin: 0 auto;
+        width: 100%;
+        max-width: 100%;
+    }
+
     .result-card {
         max-width: 100%;
-        margin: 2.5rem auto;
-        padding: 1.5rem; /* Adjusted padding */
+        margin: 1rem auto;
+        padding: 0.75rem;
     }
 
     .btn-primary {
-        padding: 0.75rem 2rem;
-        font-size: 1rem;
+        padding: 0.6rem 1.5rem;
+        font-size: 0.95rem;
     }
 
     .header-title {
-        font-size: 1.5rem;
-        letter-spacing: 1px;
+        font-size: 1.3rem;
+        letter-spacing: 0.8px;
     }
 
     .form-item {
-        font-size: 1.1rem;
-    }
-
-    .form-item label {
         font-size: 1rem;
     }
 
+    .form-item label {
+        font-size: 0.9rem;
+    }
+
+    .form-item select,
+    .input-prefix {
+        font-size: 0.9rem;
+        padding: 0.5rem 0.7rem;
+    }
+
     .input-prefix span {
-        font-size: 1.1rem;
-        padding: 0.6rem;
+        font-size: 0.9rem;
+        padding: 0.5rem 0.7rem;
     }
 
     .input-prefix input {
-        font-size: 1.1rem;
-        padding: 0.6rem;
+        font-size: 0.9rem;
+        padding: 0.5rem 0.7rem;
     }
 
     .result-header,
     .result-value {
-        font-size: 1.1rem;
+        font-size: 1rem;
+    }
+
+    .result-table {
+        min-width: 400px;
     }
 
     .result-table th, .result-table td {
-        font-size: 0.8rem; /* Further reduced font size */
-        padding: 0.4rem;
+        font-size: 0.75rem;
+        padding: 0.3rem;
+    }
+
+    .policy-block {
+        margin: 1rem auto; /* Centered */
+        padding: 0.75rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .form-grid {
+        margin: 1rem auto; /* Centered */
+        gap: 0.8rem;
+        width: 100%;
+        max-width: 100%;
+    }
+
+    #welcomeMessage {
+        font-size: 1.2rem;
+        margin: 0.8rem auto;
     }
 }
