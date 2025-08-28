@@ -1,4 +1,3 @@
-
 document.addEventListener("DOMContentLoaded", () => {
     const introPage = document.getElementById("introPage");
     const calculatorPage = document.getElementById("calculatorPage");
@@ -23,7 +22,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let selectedCategory = "";
     let currentTarget = 0;
 
-    // Requirements table
     const requirements = {
         "BRO": { india: 650000, manila: 1100000, paris: 2500000 },
         "BURG_NRI": { india: 1500000, manila: 2400000, paris: 5800000 },
@@ -44,7 +42,6 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        // --- Airtable save (added part) ---
         fetch("https://api.airtable.com/v0/app5nV3Y1Wv8AJGZV/tbl8MQJZ9b0RlEnso", {
             method: "POST",
             headers: {
@@ -55,8 +52,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 records: [
                     {
                         fields: {
-                            "fldyUDMDFno06AKQJ": name,       // Name field
-                            "fldlKmOW0yP5qhPzm": employeeID  // Employee ID field
+                            "fldyUDMDFno06AKQJ": name,
+                            "fldlKmOW0yP5qhPzm": employeeID
                         }
                     }
                 ]
@@ -75,17 +72,13 @@ document.addEventListener("DOMContentLoaded", () => {
                 console.error("Fetch error:", err);
                 alert("Failed to connect to Airtable. Proceeding anyway.");
             });
-        // --- end Airtable save ---
 
-        // Switch to calculator page
         introPage.style.display = "none";
         calculatorPage.style.display = "block";
         welcomeMessage.textContent = `Hello ${name}, please enter details for ${numPolicies} policy(ies).`;
 
-        // Clear previous content
         policiesContainer.innerHTML = "";
 
-        // Create policy blocks
         for (let i = 1; i <= numPolicies; i++) {
             const policyDiv = document.createElement("div");
             policyDiv.classList.add("policy-block");
@@ -146,20 +139,17 @@ document.addEventListener("DOMContentLoaded", () => {
             policiesContainer.appendChild(policyDiv);
         }
 
-        // Attach calculator logic
         attachCalculators();
     });
-
 
     function attachCalculators() {
         const policyBlocks = document.querySelectorAll(".policy-block");
 
-        // Attach event listener to the first policy block's category dropdown
         const firstCategoryEl = policyBlocks[0]?.querySelector(".category");
         if (firstCategoryEl) {
             firstCategoryEl.addEventListener("input", () => {
                 selectedCategory = firstCategoryEl.value.trim();
-                // Update category selection in all subsequent policy blocks
+
                 policyBlocks.forEach((block, index) => {
                     if (index > 0) {
                         const categorySelect = block.querySelector(".category");
@@ -167,10 +157,10 @@ document.addEventListener("DOMContentLoaded", () => {
                             categorySelect.value = selectedCategory || "";
                         }
                     }
-                    // Trigger calculation for all blocks when category changes
+
                     calculateWPC(block);
                 });
-                // Update shortfalls after category change
+
                 updateTotalAndShortfalls();
             });
         }
@@ -200,7 +190,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                // Calculation logic (unchanged)
                 if (["BROParticipating", "BURG_NRIParticipating", "PBRMParticipating",
                     "BURG_PRIVParticipating", "SALES_EXECParticipating",
                     "AVC_SKYParticipating"].includes(M3)) {
@@ -281,7 +270,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                 if (typeof percent === "number") {
                     result = E10 * (percent / 100);
-                    result = Math.round(result * 100) / 100; // 2 decimal places
+                    result = Math.round(result * 100) / 100;
                 }
 
                 wpcValueEl.textContent = (typeof result === "number") ? result.toLocaleString("en-IN") : "-";
@@ -290,16 +279,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 updateTotalAndShortfalls();
             }
 
-            // Attach input listeners to planType, amount, and ppt
             [planTypeEl, amountEl, pptEl].forEach(el =>
                 el.addEventListener("input", calculateWPC)
             );
 
-            // For the first block, also listen to category changes
             if (index === 0 && categoryEl) {
                 categoryEl.addEventListener("input", calculateWPC);
             } else {
-                // Trigger initial calculation for non-first blocks
+
                 calculateWPC();
             }
         });
@@ -312,13 +299,10 @@ document.addEventListener("DOMContentLoaded", () => {
             if (!isNaN(val) && val !== "-") totalWPC += parseFloat(val);
         });
 
-        // Update Total Accumulative WPC
         totalWPCEl.textContent = totalWPC ? totalWPC.toLocaleString("en-IN") : "-";
 
-        // Calculate Final Target (Current Target + Total WPC)
         const finalTarget = currentTarget + totalWPC;
 
-        // Update all 3 Achieved cells
         if (finalTarget) {
             indiaAchieved.textContent = finalTarget.toLocaleString("en-IN");
             manilaAchieved.textContent = finalTarget.toLocaleString("en-IN");
@@ -329,7 +313,6 @@ document.addEventListener("DOMContentLoaded", () => {
             parisAchieved.textContent = "-";
         }
 
-        // Update targets and shortfalls based on selected category
         if (selectedCategory && requirements[selectedCategory]) {
             const req = requirements[selectedCategory];
             indiaTargetEl.textContent = req.india.toLocaleString("en-IN");
@@ -353,36 +336,33 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-
     document.getElementById("downloadBtn").addEventListener("click", async () => {
-        const cards = document.querySelectorAll(".result-card"); // both cards
+        const cards = document.querySelectorAll(".result-card");
         const { jsPDF } = window.jspdf;
         const pdf = new jsPDF("p", "mm", "a4");
 
         const userName = userNameEl.value || userNameEl.innerText;
 
-        // Title
         pdf.setFontSize(14);
         pdf.text(`WPC Calculation for: ${userName}`, 14, 20);
 
-        let yOffset = 30; // starting y position
+        let yOffset = 30;
 
         for (let i = 0; i < cards.length; i++) {
             const canvas = await html2canvas(cards[i]);
             const imgData = canvas.toDataURL("image/png");
 
             const imgProps = pdf.getImageProperties(imgData);
-            const pdfWidth = pdf.internal.pageSize.getWidth() - 20; // page margins
+            const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
             const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-            // If content doesn't fit, create a new page
             if (yOffset + pdfHeight > pdf.internal.pageSize.getHeight() - 20) {
                 pdf.addPage();
                 yOffset = 20;
             }
 
             pdf.addImage(imgData, "PNG", 10, yOffset, pdfWidth, pdfHeight);
-            yOffset += pdfHeight + 10; // spacing between cards
+            yOffset += pdfHeight + 10;
         }
 
         pdf.save(`${userName}_WPC_Calculation.pdf`);
