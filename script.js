@@ -336,73 +336,80 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 
-document.getElementById("downloadBtn").addEventListener("click", async () => {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF("p", "mm", "a4");
+    document.getElementById("downloadBtn").addEventListener("click", () => {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
 
-    const userName = userNameEl.value || userNameEl.innerText;
+        const userName = userNameEl.value || userNameEl.innerText || "User";
+        let yOffset = 20;
+        const lineHeight = 8;
+        const pageHeight = pdf.internal.pageSize.getHeight() - 20;
 
-    let yOffset = 20;
+        // 1. Add heading
+        pdf.setFontSize(14);
+        pdf.text("WPC Calculator Report", 10, yOffset);
+        yOffset += lineHeight * 2;
 
-    // 1. Policies container
-    const policies = document.getElementById("policiesContainer");
-    if (policies) {
-        const canvas = await html2canvas(policies, { scale: 2 });
-        const imgData = canvas.toDataURL("image/png");
+        // 2. Add policies text in pointer format
+        const policies = document.querySelectorAll("#policiesContainer .policy-block");
+        pdf.setFontSize(12);
+        pdf.text("Policies:", 10, yOffset);
+        yOffset += lineHeight;
 
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+        policies.forEach((p, i) => {
+            const categoryEl = p.querySelector(".category");
+            const category = categoryEl ? categoryEl.options[categoryEl.selectedIndex]?.text : "-";
 
-        pdf.addImage(imgData, "PNG", 10, yOffset, pdfWidth, pdfHeight);
-        yOffset += pdfHeight + 10;
-    }
+            const planTypeEl = p.querySelector(".planType");
+            const planType = planTypeEl ? planTypeEl.options[planTypeEl.selectedIndex]?.text : "-";
 
-    // 2. First result card (heading + totalWPC)
-    const firstCard = document.querySelector(".result-card");
-    if (firstCard) {
-        const canvas = await html2canvas(firstCard, { scale: 2 });
-        const imgData = canvas.toDataURL("image/png");
+            const ppt = p.querySelector(".ppt")?.value || "-";
+            const premium = p.querySelector(".amount")?.value || "-";
+            const wpc = p.querySelector(".wpcValue")?.innerText || "-";
+            const wpcPercent = p.querySelector(".wpcPercent")?.innerText || "-";
 
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
 
-        if (yOffset + pdfHeight > pdf.internal.pageSize.getHeight() - 20) {
-            pdf.addPage();
-            yOffset = 20;
+            if (yOffset > pageHeight) {
+                pdf.addPage();
+                yOffset = 20;
+            }
+
+            pdf.setFont(undefined, "bold");
+            pdf.text(`Policy ${i + 1}`, 10, yOffset);
+            pdf.setFont(undefined, "normal");
+            yOffset += lineHeight;
+
+            pdf.text(`Category: ${category}`, 15, yOffset); yOffset += lineHeight;
+            pdf.text(`Plan Type: ${planType}`, 15, yOffset); yOffset += lineHeight;
+            pdf.text(`PPT (In Years): ${ppt}`, 15, yOffset); yOffset += lineHeight;
+            pdf.text(`Premium: ${premium}`, 15, yOffset); yOffset += lineHeight;
+            pdf.text(`WPC: ${wpc}`, 15, yOffset); yOffset += lineHeight;
+            pdf.text(`WPC %: ${wpcPercent}`, 15, yOffset); yOffset += lineHeight * 2;
+        });
+
+
+        // 4. Add results table if available
+        const table = document.querySelector(".result-table");
+        if (table) {
+            const headers = [...table.querySelectorAll("thead th")].map(th => th.innerText);
+            const rows = [...table.querySelectorAll("tbody tr")].map(tr =>
+                [...tr.querySelectorAll("td")].map(td => td.innerText)
+            );
+
+            pdf.autoTable({
+                head: [headers],
+                body: rows,
+                startY: yOffset,
+                styles: { fontSize: 10, cellPadding: 2 },
+                margin: { left: 10, right: 10 },
+                theme: "grid"
+            });
         }
 
-        pdf.addImage(imgData, "PNG", 10, yOffset, pdfWidth, pdfHeight);
-        yOffset += pdfHeight + 10;
-    }
+        pdf.save(`${userName}_WPC_Calculation.pdf`);
+    });
 
-    // 3. Table (expand width to avoid cutoff)
-    const tableContainer = document.querySelector(".table-container");
-    if (tableContainer) {
-        const originalStyle = tableContainer.style.overflowX;
-        tableContainer.style.overflowX = "visible"; // disable scrollbars temporarily
 
-        const canvas = await html2canvas(tableContainer, { scale: 2 });
-        const imgData = canvas.toDataURL("image/png");
-
-        const imgProps = pdf.getImageProperties(imgData);
-        const pdfWidth = pdf.internal.pageSize.getWidth() - 20;
-        const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-        if (yOffset + pdfHeight > pdf.internal.pageSize.getHeight() - 20) {
-            pdf.addPage();
-            yOffset = 20;
-        }
-
-        pdf.addImage(imgData, "PNG", 10, yOffset, pdfWidth, pdfHeight);
-        yOffset += pdfHeight + 10;
-
-        tableContainer.style.overflowX = originalStyle; // restore scroll
-    }
-
-    pdf.save(`${userName}_WPC_Calculation.pdf`);
-});
 
 
 });
