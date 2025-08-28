@@ -247,8 +247,10 @@ body {
     font-family: 'Inter', system-ui, sans-serif;
     background: #f9fafc;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: hidden; /* Prevent long text overflow */
-    text-overflow: ellipsis; /* Truncate long option text */
+    overflow: hidden;
+    /* Prevent long text overflow */
+    text-overflow: ellipsis;
+    /* Truncate long option text */
 }
 
 .form-item select:hover {
@@ -299,7 +301,8 @@ body {
     color: #881c44;
     border-right: 1px solid #d8dfe6;
     font-family: 'Inter', system-ui, sans-serif;
-    white-space: nowrap; /* Prevent span text wrapping */
+    white-space: nowrap;
+    /* Prevent span text wrapping */
 }
 
 .input-prefix input {
@@ -311,8 +314,10 @@ body {
     font-family: 'Inter', system-ui, sans-serif;
     background: #f9fafc;
     transition: background 0.3s ease;
-    overflow: hidden; /* Prevent input overflow */
-    text-overflow: ellipsis; /* Truncate long input text */
+    overflow: hidden;
+    /* Prevent input overflow */
+    text-overflow: ellipsis;
+    /* Truncate long input text */
 }
 
 .input-prefix input:focus {
@@ -391,7 +396,8 @@ body {
     overflow: hidden;
 }
 
-.result-table th, .result-table td {
+.result-table th,
+.result-table td {
     padding: 0.5rem;
     text-align: center;
     border: 1px solid #d8dfe6;
@@ -416,6 +422,31 @@ body {
     transition: background 0.3s ease;
 }
 
+#downloadBtn.download-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #881c44 !important;
+    /* Force override */
+    color: white !important;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 9999;
+}
+
+#downloadBtn.download-btn:hover {
+    background-color: #6a1535 !important;
+    /* Darker shade on hover */
+}
+
 #welcomeMessage {
     text-align: center;
     font-family: 'Inter', system-ui, sans-serif;
@@ -435,6 +466,7 @@ body {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -442,9 +474,18 @@ body {
 }
 
 @media (max-width: 768px) {
+
     .intro-container,
     #calculatorPage {
         padding: 1rem;
+    }
+
+    #downloadBtn.download-btn {
+        width: 45px;
+        height: 45px;
+        font-size: 20px;
+        bottom: 18px;
+        right: 18px;
     }
 
     .intro-card,
@@ -546,7 +587,8 @@ body {
         min-width: 500px;
     }
 
-    .result-table th, .result-table td {
+    .result-table th,
+    .result-table td {
         font-size: 0.85rem;
         padding: 0.4rem;
     }
@@ -559,9 +601,18 @@ body {
 }
 
 @media (max-width: 480px) {
+
     .intro-container,
     #calculatorPage {
         padding: 0.5rem;
+    }
+
+    #downloadBtn.download-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+        bottom: 16px;
+        right: 16px;
     }
 
     .intro-card,
@@ -667,7 +718,8 @@ body {
         min-width: 400px;
     }
 
-    .result-table th, .result-table td {
+    .result-table th,
+    .result-table td {
         font-size: 0.75rem;
         padding: 0.3rem;
     }
@@ -679,9 +731,18 @@ body {
 }
 
 @media (max-width: 360px) {
+
     .intro-container,
     #calculatorPage {
         padding: 0.3rem;
+    }
+
+    #downloadBtn.download-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 16px;
+        bottom: 12px;
+        right: 12px;
     }
 
     .intro-card,
@@ -789,7 +850,8 @@ body {
         min-width: 300px;
     }
 
-    .result-table th, .result-table td {
+    .result-table th,
+    .result-table td {
         font-size: 0.7rem;
         padding: 0.2rem;
     }
@@ -801,23 +863,29 @@ body {
 }
 
 @media (max-width: 240px) {
+
     .intro-container,
     #calculatorPage {
-        padding: 0.2rem; /* Ultra-minimized */
+        padding: 0.2rem;
+        /* Ultra-minimized */
     }
 
     .intro-card,
     .calculator-container {
-        padding: 0.3rem; /* Ultra-minimized */
+        padding: 0.3rem;
+        /* Ultra-minimized */
         margin: 0 auto;
         width: 100%;
         max-width: 100%;
-        border-radius: 8px; /* Smaller radius */
-        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05); /* Lighter shadow */
+        border-radius: 8px;
+        /* Smaller radius */
+        box-shadow: 0 6px 20px rgba(0, 0, 0, 0.05);
+        /* Lighter shadow */
     }
 
     .intro-title {
-        font-size: 1.2rem; /* Further reduced */
+        font-size: 1.2rem;
+        /* Further reduced */
     }
 
     .intro-subtitle {
@@ -835,7 +903,8 @@ body {
     }
 
     .header-banner img {
-        width: clamp(30px, 8vw, 50px); /* Smaller images */
+        width: clamp(30px, 8vw, 50px);
+        /* Smaller images */
     }
 
     .header-banner .side-img img {
@@ -844,23 +913,27 @@ body {
 
     .policy-block {
         margin: 0.5rem auto;
-        padding: 0.3rem; /* Ultra-minimized */
+        padding: 0.3rem;
+        /* Ultra-minimized */
         width: 100%;
         max-width: 100%;
         border-radius: 8px;
-        border: none; /* Remove border to save space */
+        border: none;
+        /* Remove border to save space */
     }
 
     .form-grid {
         grid-template-columns: 1fr;
-        gap: 0.3rem; /* Ultra-minimized */
+        gap: 0.3rem;
+        /* Ultra-minimized */
         margin: 0.5rem auto;
         width: 100%;
         max-width: 100%;
     }
 
     .form-item {
-        font-size: 0.8rem; /* Further reduced */
+        font-size: 0.8rem;
+        /* Further reduced */
         gap: 0.2rem;
     }
 
@@ -871,10 +944,13 @@ body {
 
     .form-item select,
     .input-prefix {
-        font-size: 0.7rem; /* Ultra-minimized */
-        padding: 0.3rem 0.4rem; /* Ultra-minimized */
+        font-size: 0.7rem;
+        /* Ultra-minimized */
+        padding: 0.3rem 0.4rem;
+        /* Ultra-minimized */
         border-radius: 6px;
-        line-height: 1.2; /* Prevent text clipping */
+        line-height: 1.2;
+        /* Prevent text clipping */
     }
 
     .input-prefix span {
@@ -895,7 +971,8 @@ body {
 
     .divider {
         margin: 0.8rem auto;
-        width: 98%; /* Maximize width */
+        width: 98%;
+        /* Maximize width */
     }
 
     .result-grid {
@@ -916,16 +993,21 @@ body {
         margin: 0.5rem auto;
         padding: 0.3rem;
         border-radius: 8px;
-        border: none; /* Remove border */
+        border: none;
+        /* Remove border */
     }
 
     .result-table {
-        min-width: 250px; /* Further reduced */
+        min-width: 250px;
+        /* Further reduced */
     }
 
-    .result-table th, .result-table td {
-        font-size: 0.6rem; /* Ultra-minimized */
-        padding: 0.15rem; /* Ultra-minimized */
+    .result-table th,
+    .result-table td {
+        font-size: 0.6rem;
+        /* Ultra-minimized */
+        padding: 0.15rem;
+        /* Ultra-minimized */
         line-height: 1.2;
     }
 

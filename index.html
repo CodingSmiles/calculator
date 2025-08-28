@@ -7,8 +7,38 @@
   <title>AXIS WPC Calculator</title>
   <link rel="stylesheet" href="styles.css">
   <script src="script.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* Floating download button */
+    .download-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      cursor: pointer;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+      z-index: 9999;
+    }
+
+    .download-btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 
+
+<!-- Floating download button -->
+<button class="download-btn" id="downloadBtn">⬇</button>
 <body>
 
   <div id="introPage" class="intro-container">
@@ -62,7 +92,7 @@
 
       <hr class="divider">
       <div class="result-card">
-        <h2 id="welcomeMessage">Total Accumulative WPC</h2>
+        <h2 >Total Accumulative WPC</h2>
         <h2 id="totalWPC">-</h2>
       </div>
 

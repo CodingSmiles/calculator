@@ -1,3 +1,4 @@
+
 document.addEventListener("DOMContentLoaded", () => {
     const introPage = document.getElementById("introPage");
     const calculatorPage = document.getElementById("calculatorPage");
@@ -351,4 +352,40 @@ document.addEventListener("DOMContentLoaded", () => {
             parisShortfallEl.textContent = "-";
         }
     }
+
+
+    document.getElementById("downloadBtn").addEventListener("click", async () => {
+        const cards = document.querySelectorAll(".result-card"); // both cards
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF("p", "mm", "a4");
+
+        const userName = userNameEl.value || userNameEl.innerText;
+
+        // Title
+        pdf.setFontSize(14);
+        pdf.text(`WPC Calculation for: ${userName}`, 14, 20);
+
+        let yOffset = 30; // starting y position
+
+        for (let i = 0; i < cards.length; i++) {
+            const canvas = await html2canvas(cards[i]);
+            const imgData = canvas.toDataURL("image/png");
+
+            const imgProps = pdf.getImageProperties(imgData);
+            const pdfWidth = pdf.internal.pageSize.getWidth() - 20; // page margins
+            const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
+
+            // If content doesn't fit, create a new page
+            if (yOffset + pdfHeight > pdf.internal.pageSize.getHeight() - 20) {
+                pdf.addPage();
+                yOffset = 20;
+            }
+
+            pdf.addImage(imgData, "PNG", 10, yOffset, pdfWidth, pdfHeight);
+            yOffset += pdfHeight + 10; // spacing between cards
+        }
+
+        pdf.save(`${userName}_WPC_Calculation.pdf`);
+    });
+
 });
