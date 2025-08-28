@@ -3,13 +3,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const calculatorPage = document.getElementById("calculatorPage");
     const startBtn = document.getElementById("startBtn");
     const userNameEl = document.getElementById("userName");
-    const employeeIDEl = document.getElementById("employeeID"); // <-- make sure you have this input in HTML
+    const employeeIDEl = document.getElementById("employeeID");
     const currentTargetEl = document.getElementById("currentTarget");
     const numPoliciesEl = document.getElementById("numPolicies");
     const welcomeMessage = document.getElementById("welcomeMessage");
     const policiesContainer = document.getElementById("policiesContainer");
     const totalWPCEl = document.getElementById("totalWPC");
-    const finalTargetEl = document.getElementById("finalTarget");
+    const indiaAchieved = document.getElementById("indiaAchieved");
+    const manilaAchieved = document.getElementById("manilaAchieved");
+    const parisAchieved = document.getElementById("parisAchieved");
     const indiaTargetEl = document.getElementById("indiaTarget");
     const indiaShortfallEl = document.getElementById("indiaShortfall");
     const manilaTargetEl = document.getElementById("manilaTarget");
@@ -59,19 +61,19 @@ document.addEventListener("DOMContentLoaded", () => {
                 ]
             })
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.error) {
-                console.error("Airtable error:", data.error);
-                alert("Failed to save data to Airtable: " + data.error.message);
-            } else {
-                console.log("Saved to Airtable:", data);
-            }
-        })
-        .catch(err => {
-            console.error("Fetch error:", err);
-            alert("Failed to connect to Airtable. Proceeding anyway.");
-        });
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) {
+                    console.error("Airtable error:", data.error);
+                    alert("Failed to save data to Airtable: " + data.error.message);
+                } else {
+                    console.log("Saved to Airtable:", data);
+                }
+            })
+            .catch(err => {
+                console.error("Fetch error:", err);
+                alert("Failed to connect to Airtable. Proceeding anyway.");
+            });
         // --- end Airtable save ---
 
         // Switch to calculator page
@@ -128,7 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
                   <label>PPT (In Years)</label>
                   <select class="ppt">
                     <option value="">Select...</option>
-                    ${Array.from({length:30}, (_,i)=>`<option value="${i+1}">${i+1}</option>`).join("")}
+                    ${Array.from({ length: 30 }, (_, i) => `<option value="${i + 1}">${i + 1}</option>`).join("")}
                   </select>
                 </div>
               </div>
@@ -147,7 +149,6 @@ document.addEventListener("DOMContentLoaded", () => {
         attachCalculators();
     });
 
-    // ... rest of your code unchanged (attachCalculators, updateTotalAndShortfalls)
 
     function attachCalculators() {
         const policyBlocks = document.querySelectorAll(".policy-block");
@@ -306,7 +307,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateTotalAndShortfalls() {
         let totalWPC = 0;
         document.querySelectorAll(".policy-block .wpcValue").forEach(el => {
-            const val = el.textContent.replace(/,/g,"");
+            const val = el.textContent.replace(/,/g, "");
             if (!isNaN(val) && val !== "-") totalWPC += parseFloat(val);
         });
 
@@ -315,7 +316,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Calculate Final Target (Current Target + Total WPC)
         const finalTarget = currentTarget + totalWPC;
-        finalTargetEl.textContent = finalTarget ? finalTarget.toLocaleString("en-IN") : "-";
+
+        // Update all 3 Achieved cells
+        if (finalTarget) {
+            indiaAchieved.textContent = finalTarget.toLocaleString("en-IN");
+            manilaAchieved.textContent = finalTarget.toLocaleString("en-IN");
+            parisAchieved.textContent = finalTarget.toLocaleString("en-IN");
+        } else {
+            indiaAchieved.textContent = "-";
+            manilaAchieved.textContent = "-";
+            parisAchieved.textContent = "-";
+        }
 
         // Update targets and shortfalls based on selected category
         if (selectedCategory && requirements[selectedCategory]) {
