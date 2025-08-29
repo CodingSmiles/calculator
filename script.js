@@ -109,7 +109,7 @@ document.addEventListener("DOMContentLoaded", () => {
                       <option value="NonParticipating">Non Participating</option>
                       <option value="ULIP">Unit Linked Insurance Plan</option>
                       <option value="TROP">TROP</option>
-                      <option value="NonTROP">Non-Term</option>
+                      <option value="NonTROP">Term</option>
                       <option value="ULIP_SUPER">Unit Linked Insurance Plan (Super Solution)</option>
                   </select>
                 </div>
