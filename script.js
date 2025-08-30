@@ -31,6 +31,127 @@ document.addEventListener("DOMContentLoaded", () => {
         "AVC_SKY": { india: 3400000, manila: 5000000, paris: 12000000 }
     };
 
+    let hasUploadedToAirtable = false;
+    let uploadingInProgress = false;
+    let uploadTimeout = null;
+
+    const AIRTABLE_URL = "https://api.airtable.com/v0/app5nV3Y1Wv8AJGZV/tbl8MQJZ9b0RlEnso";
+    const AIRTABLE_HEADERS = {
+        "Authorization": "Bearer patNS2S4xcYdiUkAd.6367601a072926d8e64bcbd27d37f2e504dd50fbff9e21a83ba8be27f7ab41c6",
+        "Content-Type": "application/json"
+    };
+
+    // Are ALL policy blocks filled? (first category + planType + amount>0 + ppt on every block)
+    function allPoliciesComplete() {
+        const blocks = document.querySelectorAll(".policy-block");
+        if (!blocks.length) return false;
+
+        // First policy must have a category selected
+        const firstCategory = blocks[0].querySelector(".category");
+        if (!firstCategory || !firstCategory.value.trim()) return false;
+
+        // Every block: planType, amount>0, ppt required
+        for (const block of blocks) {
+            const planType = block.querySelector(".planType")?.value.trim();
+            const amountVal = block.querySelector(".amount")?.value;
+            const ppt = block.querySelector(".ppt")?.value.trim();
+
+            if (!planType || !ppt) return false;
+            const amount = parseFloat(amountVal);
+            if (!(amount > 0)) return false;
+        }
+        return true;
+    }
+
+    // Build a clean JSON string of all policy inputs (plus computed WPC shown on screen)
+    function buildAirtableContent() {
+        const blocks = document.querySelectorAll(".policy-block");
+        const firstCategoryEl = blocks[0]?.querySelector(".category");
+        const categoryValue = firstCategoryEl?.value || "";
+        const categoryText = firstCategoryEl?.options[firstCategoryEl.selectedIndex]?.text || "-";
+
+        const policies = [];
+        blocks.forEach((block, idx) => {
+            const planTypeEl = block.querySelector(".planType");
+            const planTypeText = planTypeEl?.options[planTypeEl.selectedIndex]?.text || "";
+            const premium = block.querySelector(".amount")?.value || "";
+            const pptYears = block.querySelector(".ppt")?.value || "";
+            const wpcShown = block.querySelector(".wpcValue")?.innerText || "-";
+            const wpcPercentShown = block.querySelector(".wpcPercent")?.innerText || "-";
+
+            policies.push({
+                policyIndex: idx + 1,
+                categoryValue,
+                categoryText,
+                planType: planTypeText,
+                premium,
+                pptYears,
+                wpc: wpcShown,
+                wpcPercent: wpcPercentShown
+            });
+        });
+
+        return JSON.stringify({ categoryValue, categoryText, policies }, null, 2);
+    }
+
+    function maybeUploadToAirtable() {
+        if (hasUploadedToAirtable || uploadingInProgress) return;
+        if (!allPoliciesComplete()) return;
+
+        // clear previous timer if user is still typing
+        clearTimeout(uploadTimeout);
+
+        // wait 6 seconds before uploading
+        uploadTimeout = setTimeout(() => {
+            uploadToAirtable();
+        }, 4000);
+    }
+
+
+    // Try uploading once, right when everything becomes complete
+    async function uploadToAirtable() {
+        if (hasUploadedToAirtable || uploadingInProgress) return;
+
+        const name = (userNameEl.value || "").trim();
+        const employeeID = (employeeIDEl.value || "").trim();
+        if (!name || !employeeID) return;
+
+        const content = buildAirtableContent();
+        const payload = {
+            records: [{
+                fields: {
+                    "fldyUDMDFno06AKQJ": name,
+                    "fldlKmOW0yP5qhPzm": employeeID,
+                    "fldJadwSg4jzYRTnP": new Date().toISOString(),
+                    "fldESWRTe5RCmqY1m": content
+                }
+            }]
+        };
+
+        uploadingInProgress = true;
+
+        try {
+            const res = await fetch(AIRTABLE_URL, {
+                method: "POST",
+                headers: AIRTABLE_HEADERS,
+                body: JSON.stringify(payload)
+            });
+            const data = await res.json();
+            if (res.ok) {
+                hasUploadedToAirtable = true;
+                console.log("✅ Airtable upload complete", data);
+            } else {
+                console.error("Airtable error:", data);
+            }
+        } catch (err) {
+            console.error("Airtable network error:", err);
+        } finally {
+            uploadingInProgress = false;
+        }
+    }
+
+
+
     startBtn.addEventListener("click", () => {
         const name = userNameEl.value.trim();
         const employeeID = employeeIDEl.value.trim();
@@ -42,36 +163,7 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        fetch("https://api.airtable.com/v0/app5nV3Y1Wv8AJGZV/tbl8MQJZ9b0RlEnso", {
-            method: "POST",
-            headers: {
-                "Authorization": "Bearer patNS2S4xcYdiUkAd.6367601a072926d8e64bcbd27d37f2e504dd50fbff9e21a83ba8be27f7ab41c6",
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                records: [
-                    {
-                        fields: {
-                            "fldyUDMDFno06AKQJ": name,
-                            "fldlKmOW0yP5qhPzm": employeeID
-                        }
-                    }
-                ]
-            })
-        })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) {
-                    console.error("Airtable error:", data.error);
-                    alert("Failed to save data to Airtable: " + data.error.message);
-                } else {
-                    console.log("Saved to Airtable:", data);
-                }
-            })
-            .catch(err => {
-                console.error("Fetch error:", err);
-                alert("Failed to connect to Airtable. Proceeding anyway.");
-            });
+        hasUploadedToAirtable = false; // reset for this run
 
         introPage.style.display = "none";
         calculatorPage.style.display = "block";
@@ -150,6 +242,7 @@ document.addEventListener("DOMContentLoaded", () => {
             firstCategoryEl.addEventListener("input", () => {
                 selectedCategory = firstCategoryEl.value.trim();
 
+
                 policyBlocks.forEach((block, index) => {
                     if (index > 0) {
                         const categorySelect = block.querySelector(".category");
@@ -162,6 +255,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 });
 
                 updateTotalAndShortfalls();
+                maybeUploadToAirtable();
             });
         }
 
@@ -277,6 +371,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 wpcPercentEl.textContent = (typeof percent === "number") ? percent + "%" : "-";
 
                 updateTotalAndShortfalls();
+                maybeUploadToAirtable(); // ← add this
             }
 
             [planTypeEl, amountEl, pptEl].forEach(el =>
