@@ -234,6 +234,164 @@ document.addEventListener("DOMContentLoaded", () => {
     function attachCalculators() {
         const policyBlocks = document.querySelectorAll(".policy-block");
 
+        // Define calculateWPC outside the forEach loop
+        function calculateWPC(block, index) {
+            const categoryEl = block.querySelector(".category");
+            const planTypeEl = block.querySelector(".planType");
+            const amountEl = block.querySelector(".amount");
+            const pptEl = block.querySelector(".ppt");
+            const wpcValueEl = block.querySelector(".wpcValue");
+            const wpcPercentEl = block.querySelector(".wpcPercent");
+
+            const category = index === 0 ? categoryEl?.value.trim() : selectedCategory;
+            const planType = planTypeEl.value.trim();
+            const E10 = parseFloat(amountEl.value) || null;
+            const I10 = parseInt(pptEl.value) || null;
+            const M3 = category + planType;
+
+            let result = "-";
+            let percent = "-";
+
+            // Handle special cases
+            if (!E10 && !I10) {
+                wpcValueEl.textContent = "Updated Premium & PPT";
+                wpcPercentEl.textContent = "-";
+                updateTotalAndShortfalls();
+                maybeUploadToAirtable();
+                return;
+            }
+            if (!E10) {
+                wpcValueEl.textContent = "Update Premium";
+                wpcPercentEl.textContent = "-";
+                updateTotalAndShortfalls();
+                maybeUploadToAirtable();
+                return;
+            }
+            if (I10 === 0 || I10 === null) {
+                wpcValueEl.textContent = "Update PPT";
+                wpcPercentEl.textContent = "-";
+                updateTotalAndShortfalls();
+                maybeUploadToAirtable();
+                return;
+            }
+
+            // Handle plan types
+            if ([
+                "BROParticipating", "BURG_NRIParticipating", "PBRMParticipating",
+                "BURG_PRIVParticipating", "SALES_EXECParticipating", "AVC_SKYParticipating"
+            ].includes(M3)) {
+                if (I10 <= 6 && E10 <= 89000) percent = 45;
+                else if (I10 <= 6 && E10 <= 149000) percent = 55;
+                else if (I10 <= 6 && E10 >= 15000) percent = 65;
+                else if (I10 <= 9 && E10 <= 89000) percent = 55;
+                else if (I10 <= 9 && E10 <= 149000) percent = 70;
+                else if (I10 <= 9 && E10 >= 15000) percent = 85;
+                else if (I10 <= 11 && E10 <= 89000) percent = 70;
+                else if (I10 <= 11 && E10 <= 149000) percent = 85;
+                else if (I10 <= 11 && E10 >= 15000) percent = 105;
+                else if (I10 >= 12 && E10 <= 89000) percent = 75;
+                else if (I10 >= 12 && E10 <= 149000) percent = 100;
+                else if (I10 >= 12 && E10 >= 15000) percent = 125;
+            }
+            else if ([
+                "BRONonParticipating", "BURG_NRINonParticipating", "PBRMNonParticipating",
+                "BURG_PRIVNonParticipating", "SALES_EXECNonParticipating", "AVC_SKYNonParticipating"
+            ].includes(M3)) {
+                if (I10 <= 6 && E10 <= 89000) percent = 50;
+                else if (I10 <= 6 && E10 <= 149000) percent = 60;
+                else if (I10 <= 6 && E10 >= 15000) percent = 70;
+                else if (I10 <= 9 && E10 <= 89000) percent = 60;
+                else if (I10 <= 9 && E10 <= 149000) percent = 75;
+                else if (I10 <= 9 && E10 >= 15000) percent = 90;
+                else if (I10 <= 11 && E10 <= 89000) percent = 80;
+                else if (I10 <= 11 && E10 <= 149000) percent = 95;
+                else if (I10 <= 11 && E10 >= 15000) percent = 115;
+                else if (I10 >= 12 && E10 <= 89000) percent = 85;
+                else if (I10 >= 12 && E10 <= 149000) percent = 110;
+                else if (I10 >= 12 && E10 >= 15000) percent = 135;
+            }
+            else if (M3 === "BROULIP") {
+                percent = E10 < 250000 ? 10 : 15;
+            }
+            else if ([
+                "BROTROP", "BURG_NRITROP", "PBRMTROP",
+                "BURG_PRIVTROP", "SALES_EXECTROP", "AVC_SKYTROP"
+            ].includes(M3)) {
+                if (E10 < 5000) percent = 150;
+                else {
+                    wpcValueEl.textContent = "Premium Should be <5K";
+                    wpcPercentEl.textContent = "-";
+                    updateTotalAndShortfalls();
+                    maybeUploadToAirtable();
+                    return;
+                }
+            }
+            else if ([
+                "BRONonTROP", "BURG_NRINonTROP", "PBRMNonTROP",
+                "BURG_PRIVNonTROP", "SALES_EXECNonTROP", "AVC_SKYNonTROP"
+            ].includes(M3)) {
+                if (E10 < 5000) percent = 100;
+                else {
+                    wpcValueEl.textContent = "Premium Should be <5K";
+                    wpcPercentEl.textContent = "-";
+                    updateTotalAndShortfalls();
+                    maybeUploadToAirtable();
+                    return;
+                }
+            }
+            else if (M3 === "BURG_NRIULIP") {
+                if (E10 < 500000) percent = 20;
+                else if (E10 < 750000) percent = 30;
+                else if (E10 >= 750000) percent = 40;
+            }
+            else if (M3 === "BURG_PRIVULIP") {
+                if (E10 < 1500000) percent = 25;
+                else if (E10 < 3000000) percent = 35;
+                else if (E10 >= 3000000) percent = 45;
+            }
+            else if (M3 === "SALES_EXECULIP") {
+                if (E10 < 250000) percent = 10;
+                else if (E10 >= 250000) percent = 15;
+            }
+            else if (M3 === "AVC_SKYULIP") {
+                if (E10 < 190000) percent = 20;
+                else if (E10 < 250000) percent = 30;
+                else if (E10 >= 250000) percent = 40;
+            }
+            else if ([
+                "PBRMULIP_SUPER", "AVC_SKYULIP_SUPER"
+            ].includes(M3)) {
+                if (I10 <= 6 && E10 <= 89000) percent = 40;
+                else if (I10 <= 6 && E10 <= 149000) percent = 50;
+                else if (I10 <= 6 && E10 >= 150000) percent = 65;
+                else if (I10 <= 9 && E10 <= 89000) percent = 50;
+                else if (I10 <= 9 && E10 <= 149000) percent = 65;
+                else if (I10 <= 9 && E10 >= 150000) percent = 80;
+                else if (I10 <= 11 && E10 <= 89000) percent = 65;
+                else if (I10 <= 11 && E10 <= 149000) percent = 80;
+                else if (I10 <= 11 && E10 >= 150000) percent = 100;
+                else if (I10 >= 12 && E10 <= 89000) percent = 70;
+                else if (I10 >= 12 && E10 <= 149000) percent = 95;
+                else if (I10 >= 12 && E10 >= 150000) percent = 115;
+            }
+            else if (M3 === "PBRMULIP") {
+                if (E10 <= 249000) percent = 20;
+                else if (E10 <= 250000) percent = 30;
+                else if (E10 >= 500000) percent = 40;
+            }
+
+            if (typeof percent === "number") {
+                result = E10 * (percent / 100);
+                result = Math.round(result * 100) / 100;
+            }
+
+            wpcValueEl.textContent = (typeof result === "number") ? result.toLocaleString("en-IN") : "-";
+            wpcPercentEl.textContent = (typeof percent === "number") ? percent + "%" : "-";
+
+            updateTotalAndShortfalls();
+            maybeUploadToAirtable();
+        }
+
         const firstCategoryEl = policyBlocks[0]?.querySelector(".category");
         if (firstCategoryEl) {
             firstCategoryEl.addEventListener("input", () => {
@@ -246,8 +404,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             categorySelect.value = selectedCategory || "";
                         }
                     }
-
-                    calculateWPC(block);
+                    calculateWPC(block, index);
                 });
 
                 updateTotalAndShortfalls();
@@ -260,168 +417,17 @@ document.addEventListener("DOMContentLoaded", () => {
             const planTypeEl = block.querySelector(".planType");
             const amountEl = block.querySelector(".amount");
             const pptEl = block.querySelector(".ppt");
-            const wpcValueEl = block.querySelector(".wpcValue");
-            const wpcPercentEl = block.querySelector(".wpcPercent");
-
-            function calculateWPC() {
-                const category = index === 0 ? categoryEl?.value.trim() : selectedCategory;
-                const planType = planTypeEl.value.trim();
-                const E10 = parseFloat(amountEl.value) || null;
-                const I10 = parseInt(pptEl.value) || null;
-                const M3 = category + planType;
-
-                let result = "-";
-                let percent = "-";
-
-                // Handle special cases
-                if (!E10 && !I10) {
-                    wpcValueEl.textContent = "Updated Premium & PPT";
-                    wpcPercentEl.textContent = "-";
-                    updateTotalAndShortfalls();
-                    maybeUploadToAirtable();
-                    return;
-                }
-                if (!E10) {
-                    wpcValueEl.textContent = "Update Premium";
-                    wpcPercentEl.textContent = "-";
-                    updateTotalAndShortfalls();
-                    maybeUploadToAirtable();
-                    return;
-                }
-                if (I10 === 0 || I10 === null) {
-                    wpcValueEl.textContent = "Update PPT";
-                    wpcPercentEl.textContent = "-";
-                    updateTotalAndShortfalls();
-                    maybeUploadToAirtable();
-                    return;
-                }
-
-                // Handle plan types
-                if ([
-                    "BROParticipating", "BURG_NRIParticipating", "PBRMParticipating",
-                    "BURG_PRIVParticipating", "SALES_EXECParticipating", "AVC_SKYParticipating"
-                ].includes(M3)) {
-                    if (I10 <= 6 && E10 <= 89000) percent = 45;
-                    else if (I10 <= 6 && E10 <= 149000) percent = 55;
-                    else if (I10 <= 6 && E10 >= 15000) percent = 65;
-                    else if (I10 <= 9 && E10 <= 89000) percent = 55;
-                    else if (I10 <= 9 && E10 <= 149000) percent = 70;
-                    else if (I10 <= 9 && E10 >= 15000) percent = 85;
-                    else if (I10 <= 11 && E10 <= 89000) percent = 70;
-                    else if (I10 <= 11 && E10 <= 149000) percent = 85;
-                    else if (I10 <= 11 && E10 >= 15000) percent = 105;
-                    else if (I10 >= 12 && E10 <= 89000) percent = 75;
-                    else if (I10 >= 12 && E10 <= 149000) percent = 100;
-                    else if (I10 >= 12 && E10 >= 15000) percent = 125;
-                }
-                else if ([
-                    "BRONonParticipating", "BURG_NRINonParticipating", "PBRMNonParticipating",
-                    "BURG_PRIVNonParticipating", "SALES_EXECNonParticipating", "AVC_SKYNonParticipating"
-                ].includes(M3)) {
-                    if (I10 <= 6 && E10 <= 89000) percent = 50;
-                    else if (I10 <= 6 && E10 <= 149000) percent = 60;
-                    else if (I10 <= 6 && E10 >= 15000) percent = 70;
-                    else if (I10 <= 9 && E10 <= 89000) percent = 60;
-                    else if (I10 <= 9 && E10 <= 149000) percent = 75;
-                    else if (I10 <= 9 && E10 >= 15000) percent = 90;
-                    else if (I10 <= 11 && E10 <= 89000) percent = 80;
-                    else if (I10 <= 11 && E10 <= 149000) percent = 95;
-                    else if (I10 <= 11 && E10 >= 15000) percent = 115;
-                    else if (I10 >= 12 && E10 <= 89000) percent = 85;
-                    else if (I10 >= 12 && E10 <= 149000) percent = 110;
-                    else if (I10 >= 12 && E10 >= 15000) percent = 135;
-                }
-                else if (M3 === "BROULIP") {
-                    percent = E10 < 250000 ? 10 : 15;
-                }
-                else if ([
-                    "BROTROP", "BURG_NRITROP", "PBRMTROP",
-                    "BURG_PRIVTROP", "SALES_EXECTROP", "AVC_SKYTROP"
-                ].includes(M3)) {
-                    if (E10 < 5000) percent = 150;
-                    else {
-                        wpcValueEl.textContent = "Premium Should be <5K";
-                        wpcPercentEl.textContent = "-";
-                        updateTotalAndShortfalls();
-                        maybeUploadToAirtable();
-                        return;
-                    }
-                }
-                else if ([
-                    "BRONonTROP", "BURG_NRINonTROP", "PBRMNonTROP",
-                    "BURG_PRIVNonTROP", "SALES_EXECNonTROP", "AVC_SKYNonTROP"
-                ].includes(M3)) {
-                    if (E10 < 5000) percent = 100;
-                    else {
-                        wpcValueEl.textContent = "Premium Should be <5K";
-                        wpcPercentEl.textContent = "-";
-                        updateTotalAndShortfalls();
-                        maybeUploadToAirtable();
-                        return;
-                    }
-                }
-                else if (M3 === "BURG_NRIULIP") {
-                    if (E10 < 500000) percent = 20;
-                    else if (E10 < 750000) percent = 30;
-                    else if (E10 >= 750000) percent = 40;
-                }
-                else if (M3 === "BURG_PRIVULIP") {
-                    if (E10 < 1500000) percent = 25;
-                    else if (E10 < 3000000) percent = 35;
-                    else if (E10 >= 3000000) percent = 45;
-                }
-                else if (M3 === "SALES_EXECULIP") {
-                    if (E10 < 250000) percent = 10;
-                    else if (E10 >= 250000) percent = 15;
-                }
-                else if (M3 === "AVC_SKYULIP") {
-                    if (E10 < 190000) percent = 20;
-                    else if (E10 < 250000) percent = 30;
-                    else if (E10 >= 250000) percent = 40;
-                }
-                else if ([
-                    "PBRMULIP_SUPER", "AVC_SKYULIP_SUPER"
-                ].includes(M3)) {
-                    if (I10 <= 6 && E10 <= 89000) percent = 40;
-                    else if (I10 <= 6 && E10 <= 149000) percent = 50;
-                    else if (I10 <= 6 && E10 >= 150000) percent = 65;
-                    else if (I10 <= 9 && E10 <= 89000) percent = 50;
-                    else if (I10 <= 9 && E10 <= 149000) percent = 65;
-                    else if (I10 <= 9 && E10 >= 150000) percent = 80;
-                    else if (I10 <= 11 && E10 <= 89000) percent = 65;
-                    else if (I10 <= 11 && E10 <= 149000) percent = 80;
-                    else if (I10 <= 11 && E10 >= 150000) percent = 100;
-                    else if (I10 >= 12 && E10 <= 89000) percent = 70;
-                    else if (I10 >= 12 && E10 <= 149000) percent = 95;
-                    else if (I10 >= 12 && E10 >= 150000) percent = 115;
-                }
-                else if (M3 === "PBRMULIP") {
-                    if (E10 <= 249000) percent = 20;
-                    else if (E10 <= 250000) percent = 30;
-                    else if (E10 >= 500000) percent = 40;
-                }
-
-                if (typeof percent === "number") {
-                    result = E10 * (percent / 100);
-                    result = Math.round(result * 100) / 100;
-                }
-
-                wpcValueEl.textContent = (typeof result === "number") ? result.toLocaleString("en-IN") : "-";
-                wpcPercentEl.textContent = (typeof percent === "number") ? percent + "%" : "-";
-
-                updateTotalAndShortfalls();
-                maybeUploadToAirtable();
-            }
 
             [planTypeEl, amountEl, pptEl].forEach(el =>
-                el.addEventListener("input", calculateWPC)
+                el.addEventListener("input", () => calculateWPC(block, index))
             );
 
             if (index === 0 && categoryEl) {
-                categoryEl.addEventListener("input", calculateWPC);
-            } else {
-                calculateWPC();
+                categoryEl.addEventListener("input", () => calculateWPC(block, index));
             }
+
+            // Initialize calculation for the block
+            calculateWPC(block, index);
         });
     }
 
@@ -480,7 +486,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const lineHeight = 8;
         const pageHeight = pdf.internal.pageSize.getHeight() - 20;
 
-        // 1. Add heading
+        // Add heading
         pdf.setFontSize(14);
         pdf.text(`WPC Calculator for: ${userName}`, 10, yOffset);
         yOffset += lineHeight * 2;
@@ -490,7 +496,6 @@ document.addEventListener("DOMContentLoaded", () => {
         pdf.text("Policies:", 10, yOffset);
         yOffset += lineHeight;
 
-        // Get the first category only
         let firstCategory = "-";
         if (policies.length > 0) {
             const firstCategoryEl = policies[0].querySelector(".category");
