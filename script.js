@@ -107,7 +107,6 @@ document.addEventListener("DOMContentLoaded", () => {
         }, 4000);
     }
 
-
     // Try uploading once, right when everything becomes complete
     async function uploadToAirtable() {
         if (hasUploadedToAirtable || uploadingInProgress) return;
@@ -149,8 +148,6 @@ document.addEventListener("DOMContentLoaded", () => {
             uploadingInProgress = false;
         }
     }
-
-
 
     startBtn.addEventListener("click", () => {
         const name = userNameEl.value.trim();
@@ -242,7 +239,6 @@ document.addEventListener("DOMContentLoaded", () => {
             firstCategoryEl.addEventListener("input", () => {
                 selectedCategory = firstCategoryEl.value.trim();
 
-
                 policyBlocks.forEach((block, index) => {
                     if (index > 0) {
                         const categorySelect = block.querySelector(".category");
@@ -277,16 +273,34 @@ document.addEventListener("DOMContentLoaded", () => {
                 let result = "-";
                 let percent = "-";
 
-                if (!category || !planType || !E10 || !I10) {
-                    wpcValueEl.textContent = "-";
+                // Handle special cases
+                if (!E10 && !I10) {
+                    wpcValueEl.textContent = "Updated Premium & PPT";
                     wpcPercentEl.textContent = "-";
                     updateTotalAndShortfalls();
+                    maybeUploadToAirtable();
+                    return;
+                }
+                if (!E10) {
+                    wpcValueEl.textContent = "Update Premium";
+                    wpcPercentEl.textContent = "-";
+                    updateTotalAndShortfalls();
+                    maybeUploadToAirtable();
+                    return;
+                }
+                if (I10 === 0 || I10 === null) {
+                    wpcValueEl.textContent = "Update PPT";
+                    wpcPercentEl.textContent = "-";
+                    updateTotalAndShortfalls();
+                    maybeUploadToAirtable();
                     return;
                 }
 
-                if (["BROParticipating", "BURG_NRIParticipating", "PBRMParticipating",
-                    "BURG_PRIVParticipating", "SALES_EXECParticipating",
-                    "AVC_SKYParticipating"].includes(M3)) {
+                // Handle plan types
+                if ([
+                    "BROParticipating", "BURG_NRIParticipating", "PBRMParticipating",
+                    "BURG_PRIVParticipating", "SALES_EXECParticipating", "AVC_SKYParticipating"
+                ].includes(M3)) {
                     if (I10 <= 6 && E10 <= 89000) percent = 45;
                     else if (I10 <= 6 && E10 <= 149000) percent = 55;
                     else if (I10 <= 6 && E10 >= 15000) percent = 65;
@@ -300,9 +314,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     else if (I10 >= 12 && E10 <= 149000) percent = 100;
                     else if (I10 >= 12 && E10 >= 15000) percent = 125;
                 }
-                else if (["BRONonParticipating", "BURG_NRINonParticipating", "PBRMNonParticipating",
-                    "BURG_PRIVNonParticipating", "SALES_EXECNonParticipating",
-                    "AVC_SKYNonParticipating"].includes(M3)) {
+                else if ([
+                    "BRONonParticipating", "BURG_NRINonParticipating", "PBRMNonParticipating",
+                    "BURG_PRIVNonParticipating", "SALES_EXECNonParticipating", "AVC_SKYNonParticipating"
+                ].includes(M3)) {
                     if (I10 <= 6 && E10 <= 89000) percent = 50;
                     else if (I10 <= 6 && E10 <= 149000) percent = 60;
                     else if (I10 <= 6 && E10 >= 15000) percent = 70;
@@ -317,37 +332,56 @@ document.addEventListener("DOMContentLoaded", () => {
                     else if (I10 >= 12 && E10 >= 15000) percent = 135;
                 }
                 else if (M3 === "BROULIP") {
-                    percent = (E10 < 250000) ? 10 : 15;
+                    percent = E10 < 250000 ? 10 : 15;
                 }
-                else if (["BROTROP", "BURG_NRITROP", "PBRMTROP",
-                    "BURG_PRIVTROP", "SALES_EXECTROP",
-                    "AVC_SKYTROP"].includes(M3)) {
+                else if ([
+                    "BROTROP", "BURG_NRITROP", "PBRMTROP",
+                    "BURG_PRIVTROP", "SALES_EXECTROP", "AVC_SKYTROP"
+                ].includes(M3)) {
                     if (E10 < 5000) percent = 150;
+                    else {
+                        wpcValueEl.textContent = "Premium Should be <5K";
+                        wpcPercentEl.textContent = "-";
+                        updateTotalAndShortfalls();
+                        maybeUploadToAirtable();
+                        return;
+                    }
                 }
-                else if (["BRONonTROP", "BURG_NRINonTROP", "PBRMNonTROP",
-                    "BURG_PRIVNonTROP", "SALES_EXECNonTROP",
-                    "AVC_SKYNonTROP"].includes(M3)) {
+                else if ([
+                    "BRONonTROP", "BURG_NRINonTROP", "PBRMNonTROP",
+                    "BURG_PRIVNonTROP", "SALES_EXECNonTROP", "AVC_SKYNonTROP"
+                ].includes(M3)) {
                     if (E10 < 5000) percent = 100;
+                    else {
+                        wpcValueEl.textContent = "Premium Should be <5K";
+                        wpcPercentEl.textContent = "-";
+                        updateTotalAndShortfalls();
+                        maybeUploadToAirtable();
+                        return;
+                    }
                 }
                 else if (M3 === "BURG_NRIULIP") {
                     if (E10 < 500000) percent = 20;
                     else if (E10 < 750000) percent = 30;
-                    else percent = 40;
+                    else if (E10 >= 750000) percent = 40;
                 }
                 else if (M3 === "BURG_PRIVULIP") {
                     if (E10 < 1500000) percent = 25;
                     else if (E10 < 3000000) percent = 35;
-                    else percent = 45;
+                    else if (E10 >= 3000000) percent = 45;
                 }
                 else if (M3 === "SALES_EXECULIP") {
-                    percent = (E10 < 250000) ? 10 : 15;
+                    if (E10 < 250000) percent = 10;
+                    else if (E10 >= 250000) percent = 15;
                 }
                 else if (M3 === "AVC_SKYULIP") {
                     if (E10 < 190000) percent = 20;
                     else if (E10 < 250000) percent = 30;
-                    else percent = 40;
+                    else if (E10 >= 250000) percent = 40;
                 }
-                else if (M3 === "AVC_SKYULIP_SUPER") {
+                else if ([
+                    "PBRMULIP_SUPER", "AVC_SKYULIP_SUPER"
+                ].includes(M3)) {
                     if (I10 <= 6 && E10 <= 89000) percent = 40;
                     else if (I10 <= 6 && E10 <= 149000) percent = 50;
                     else if (I10 <= 6 && E10 >= 150000) percent = 65;
@@ -361,6 +395,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     else if (I10 >= 12 && E10 <= 149000) percent = 95;
                     else if (I10 >= 12 && E10 >= 150000) percent = 115;
                 }
+                else if (M3 === "PBRMULIP") {
+                    if (E10 <= 249000) percent = 20;
+                    else if (E10 <= 250000) percent = 30;
+                    else if (E10 >= 500000) percent = 40;
+                }
 
                 if (typeof percent === "number") {
                     result = E10 * (percent / 100);
@@ -371,7 +410,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 wpcPercentEl.textContent = (typeof percent === "number") ? percent + "%" : "-";
 
                 updateTotalAndShortfalls();
-                maybeUploadToAirtable(); // ← add this
+                maybeUploadToAirtable();
             }
 
             [planTypeEl, amountEl, pptEl].forEach(el =>
@@ -381,7 +420,6 @@ document.addEventListener("DOMContentLoaded", () => {
             if (index === 0 && categoryEl) {
                 categoryEl.addEventListener("input", calculateWPC);
             } else {
-
                 calculateWPC();
             }
         });
@@ -391,7 +429,9 @@ document.addEventListener("DOMContentLoaded", () => {
         let totalWPC = 0;
         document.querySelectorAll(".policy-block .wpcValue").forEach(el => {
             const val = el.textContent.replace(/,/g, "");
-            if (!isNaN(val) && val !== "-") totalWPC += parseFloat(val);
+            if (!isNaN(val) && val !== "-" && !val.includes("Update") && !val.includes("Premium Should")) {
+                totalWPC += parseFloat(val);
+            }
         });
 
         totalWPCEl.textContent = totalWPC ? totalWPC.toLocaleString("en-IN") : "-";
@@ -450,7 +490,7 @@ document.addEventListener("DOMContentLoaded", () => {
         pdf.text("Policies:", 10, yOffset);
         yOffset += lineHeight;
 
-        // ✅ Get the first category only
+        // Get the first category only
         let firstCategory = "-";
         if (policies.length > 0) {
             const firstCategoryEl = policies[0].querySelector(".category");
@@ -460,7 +500,6 @@ document.addEventListener("DOMContentLoaded", () => {
         policies.forEach((p, i) => {
             const planTypeEl = p.querySelector(".planType");
             const planType = planTypeEl ? planTypeEl.options[planTypeEl.selectedIndex]?.text : "-";
-
             const ppt = p.querySelector(".ppt")?.value || "-";
             const premium = p.querySelector(".amount")?.value || "-";
             const wpc = p.querySelector(".wpcValue")?.innerText || "-";
@@ -476,7 +515,6 @@ document.addEventListener("DOMContentLoaded", () => {
             pdf.setFont(undefined, "normal");
             yOffset += lineHeight;
 
-            // ✅ Always use the first policy's category
             pdf.text(`Category: ${firstCategory}`, 15, yOffset); yOffset += lineHeight;
             pdf.text(`Plan Type: ${planType}`, 15, yOffset); yOffset += lineHeight;
             pdf.text(`PPT (In Years): ${ppt}`, 15, yOffset); yOffset += lineHeight;
@@ -485,8 +523,7 @@ document.addEventListener("DOMContentLoaded", () => {
             pdf.text(`WPC %: ${wpcPercent}`, 15, yOffset); yOffset += lineHeight * 2;
         });
 
-
-        // 4. Add results table if available
+        // Add results table if available
         const table = document.querySelector(".result-table");
         if (table) {
             const headers = [...table.querySelectorAll("thead th")].map(th => th.innerText);
@@ -510,8 +547,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
         pdf.save(`${userName}_WPC_Calculation.pdf`);
     });
-
-
-
-
 });
