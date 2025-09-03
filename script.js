@@ -254,7 +254,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             // Handle special cases
             if (!E10 && !I10) {
-                wpcValueEl.textContent = "Updated Premium & PPT";
+                wpcValueEl.textContent = "Update Premium & PPT";
                 wpcPercentEl.textContent = "-";
                 updateTotalAndShortfalls();
                 maybeUploadToAirtable();
@@ -275,85 +275,133 @@ document.addEventListener("DOMContentLoaded", () => {
                 return;
             }
 
-            // Handle plan types
+            // Define minimum premiums based on the provided table
+            const minimumPremiums = {
+                // TERM Plans
+                "BRONonTROP": 5000,
+                "BURG_NRINonTROP": 5000,
+                "PBRMNonTROP": 5000,
+                "BURG_PRIVNonTROP": 5000,
+                "SALES_EXECNonTROP": 5000,
+                "AVC_SKYNonTROP": 5000,
+                "BROTROP": 5000,
+                "BURG_NRITROP": 5000,
+                "PBRMTROP": 5000,
+                "BURG_PRIVTROP": 5000,
+                "SALES_EXECTROP": 5000,
+                "AVC_SKYTROP": 5000,
+                // Participating Plans
+                "BROParticipating": 50000,
+                "BURG_NRIParticipating": 50000,
+                "PBRMParticipating": 50000,
+                "BURG_PRIVParticipating": 50000,
+                "SALES_EXECParticipating": 50000,
+                "AVC_SKYParticipating": 50000,
+                // Non-Participating Plans
+                "BRONonParticipating": 50000,
+                "BURG_NRINonParticipating": 50000,
+                "PBRMNonParticipating": 50000,
+                "BURG_PRIVNonParticipating": 50000,
+                "SALES_EXECNonParticipating": 50000,
+                "AVC_SKYNonParticipating": 50000,
+                // ULIP Plans
+                "BROULIP": 190000,
+                "BURG_NRIULIP": 240000,
+                "BURG_PRIVULIP": 1500000,
+                "SALES_EXECULIP": 250000,
+                "AVC_SKYULIP": 190000,
+                "PBRMULIP": 125000,
+                "PBRMULIP_SUPER": 50000,
+                "AVC_SKYULIP_SUPER": 50000
+            };
+
+            // Function to check minimum premium
+            function checkMinimumPremium(M3, E10) {
+                const minPremium = minimumPremiums[M3];
+                if (minPremium && E10 < minPremium) {
+                    wpcValueEl.textContent = `Premium Should be >= ₹${minPremium}`;
+                    wpcPercentEl.textContent = "-";
+                    updateTotalAndShortfalls();
+                    maybeUploadToAirtable();
+                    return false;
+                }
+                return true;
+            }
+
+
             if ([
                 "BROParticipating", "BURG_NRIParticipating", "PBRMParticipating",
                 "BURG_PRIVParticipating", "SALES_EXECParticipating", "AVC_SKYParticipating"
             ].includes(M3)) {
+                if (!checkMinimumPremium(M3, E10)) return;
                 if (I10 <= 6 && E10 <= 89000) percent = 45;
                 else if (I10 <= 6 && E10 <= 149000) percent = 55;
-                else if (I10 <= 6 && E10 >= 15000) percent = 65;
+                else if (I10 <= 6 && E10 >= 150000) percent = 65;
                 else if (I10 <= 9 && E10 <= 89000) percent = 55;
                 else if (I10 <= 9 && E10 <= 149000) percent = 70;
-                else if (I10 <= 9 && E10 >= 15000) percent = 85;
+                else if (I10 <= 9 && E10 >= 150000) percent = 85;
                 else if (I10 <= 11 && E10 <= 89000) percent = 70;
                 else if (I10 <= 11 && E10 <= 149000) percent = 85;
-                else if (I10 <= 11 && E10 >= 15000) percent = 105;
+                else if (I10 <= 11 && E10 >= 150000) percent = 105;
                 else if (I10 >= 12 && E10 <= 89000) percent = 75;
                 else if (I10 >= 12 && E10 <= 149000) percent = 100;
-                else if (I10 >= 12 && E10 >= 15000) percent = 125;
+                else if (I10 >= 12 && E10 >= 150000) percent = 125;
             }
             else if ([
                 "BRONonParticipating", "BURG_NRINonParticipating", "PBRMNonParticipating",
                 "BURG_PRIVNonParticipating", "SALES_EXECNonParticipating", "AVC_SKYNonParticipating"
             ].includes(M3)) {
+                if (!checkMinimumPremium(M3, E10)) return;
                 if (I10 <= 6 && E10 <= 89000) percent = 50;
                 else if (I10 <= 6 && E10 <= 149000) percent = 60;
-                else if (I10 <= 6 && E10 >= 15000) percent = 70;
+                else if (I10 <= 6 && E10 >= 150000) percent = 70;
                 else if (I10 <= 9 && E10 <= 89000) percent = 60;
                 else if (I10 <= 9 && E10 <= 149000) percent = 75;
-                else if (I10 <= 9 && E10 >= 15000) percent = 90;
+                else if (I10 <= 9 && E10 >= 150000) percent = 90;
                 else if (I10 <= 11 && E10 <= 89000) percent = 80;
                 else if (I10 <= 11 && E10 <= 149000) percent = 95;
-                else if (I10 <= 11 && E10 >= 15000) percent = 115;
+                else if (I10 <= 11 && E10 >= 150000) percent = 115;
                 else if (I10 >= 12 && E10 <= 89000) percent = 85;
                 else if (I10 >= 12 && E10 <= 149000) percent = 110;
-                else if (I10 >= 12 && E10 >= 15000) percent = 135;
+                else if (I10 >= 12 && E10 >= 150000) percent = 135;
             }
             else if (M3 === "BROULIP") {
+                if (!checkMinimumPremium(M3, E10)) return;
                 percent = E10 < 250000 ? 10 : 15;
             }
             else if ([
                 "BROTROP", "BURG_NRITROP", "PBRMTROP",
                 "BURG_PRIVTROP", "SALES_EXECTROP", "AVC_SKYTROP"
             ].includes(M3)) {
-                if (E10 < 5000) percent = 150;
-                else {
-                    wpcValueEl.textContent = "Premium Should be <5K";
-                    wpcPercentEl.textContent = "-";
-                    updateTotalAndShortfalls();
-                    maybeUploadToAirtable();
-                    return;
-                }
+                if (!checkMinimumPremium(M3, E10)) return;
+                percent = 150;
             }
             else if ([
                 "BRONonTROP", "BURG_NRINonTROP", "PBRMNonTROP",
                 "BURG_PRIVNonTROP", "SALES_EXECNonTROP", "AVC_SKYNonTROP"
             ].includes(M3)) {
-                if (E10 < 5000) percent = 100;
-                else {
-                    wpcValueEl.textContent = "Premium Should be <5K";
-                    wpcPercentEl.textContent = "-";
-                    updateTotalAndShortfalls();
-                    maybeUploadToAirtable();
-                    return;
-                }
+                if (!checkMinimumPremium(M3, E10)) return;
+                percent = 100;
             }
             else if (M3 === "BURG_NRIULIP") {
+                if (!checkMinimumPremium(M3, E10)) return;
                 if (E10 < 500000) percent = 20;
                 else if (E10 < 750000) percent = 30;
                 else if (E10 >= 750000) percent = 40;
             }
             else if (M3 === "BURG_PRIVULIP") {
+                if (!checkMinimumPremium(M3, E10)) return;
                 if (E10 < 1500000) percent = 25;
                 else if (E10 < 3000000) percent = 35;
                 else if (E10 >= 3000000) percent = 45;
             }
             else if (M3 === "SALES_EXECULIP") {
+                if (!checkMinimumPremium(M3, E10)) return;
                 if (E10 < 250000) percent = 10;
                 else if (E10 >= 250000) percent = 15;
             }
             else if (M3 === "AVC_SKYULIP") {
+                if (!checkMinimumPremium(M3, E10)) return;
                 if (E10 < 190000) percent = 20;
                 else if (E10 < 250000) percent = 30;
                 else if (E10 >= 250000) percent = 40;
@@ -361,6 +409,7 @@ document.addEventListener("DOMContentLoaded", () => {
             else if ([
                 "PBRMULIP_SUPER", "AVC_SKYULIP_SUPER"
             ].includes(M3)) {
+                if (!checkMinimumPremium(M3, E10)) return;
                 if (I10 <= 6 && E10 <= 89000) percent = 40;
                 else if (I10 <= 6 && E10 <= 149000) percent = 50;
                 else if (I10 <= 6 && E10 >= 150000) percent = 65;
@@ -375,6 +424,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 else if (I10 >= 12 && E10 >= 150000) percent = 115;
             }
             else if (M3 === "PBRMULIP") {
+                if (!checkMinimumPremium(M3, E10)) return;
                 if (E10 <= 249000) percent = 20;
                 else if (E10 <= 250000) percent = 30;
                 else if (E10 >= 500000) percent = 40;
