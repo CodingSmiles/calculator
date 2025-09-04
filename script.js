@@ -18,6 +18,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const manilaShortfallEl = document.getElementById("manilaShortfall");
     const parisTargetEl = document.getElementById("parisTarget");
     const parisShortfallEl = document.getElementById("parisShortfall");
+    const downloadBtn = document.getElementById("downloadBtn");
+
+    // Initially hide the download button
+    downloadBtn.classList.add("hidden");
 
     let selectedCategory = "";
     let currentTarget = 0;
@@ -164,6 +168,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         introPage.style.display = "none";
         calculatorPage.style.display = "block";
+        downloadBtn.classList.remove("hidden"); // Show the download button
         welcomeMessage.textContent = `Hello ${name}, please enter details for ${numPolicies} policy(ies).`;
 
         policiesContainer.innerHTML = "";
@@ -327,7 +332,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 return true;
             }
-
 
             if ([
                 "BROParticipating", "BURG_NRIParticipating", "PBRMParticipating",
