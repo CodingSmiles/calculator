@@ -24,11 +24,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const requirements = {
         "BRO": { india: 650000, manila: 1100000, paris: 2500000 },
-        "BURG_NRI": { india: 1500000, manila: 2400000, paris: 5800000 },
-        "PBRM": { india: 1300000, manila: 2000000, paris: 4500000 },
-        "BURG_PRIV": { india: 1700000, manila: 2500000, paris: 6000000 },
-        "SALES_EXEC": { india: 600000, manila: 100000, paris: 2200000 },
-        "AVC_SKY": { india: 3400000, manila: 5000000, paris: 12000000 }
+        "BURG_NRI": { india: 1100000, manila: 1600000, paris: 3800000 },
+        "PBRM": { india: 900000, manila: 1400000, paris: 3100000 },
+        "BURG_PRIV": { india: 1200000, manila: 1700000, paris: 4000000 },
+        "SALES_EXEC": { india: 600000, manila: 1000000, paris: 2200000 },
+        "AVC_SKY": { india: 2400000, manila: 3400000, paris: 8000000 }
     };
 
     let hasUploadedToAirtable = false;
