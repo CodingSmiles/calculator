@@ -95,7 +95,30 @@ document.addEventListener("DOMContentLoaded", () => {
             });
         });
 
-        return JSON.stringify({ categoryValue, categoryText, policies }, null, 2);
+        // Extract table data from result-table
+        const tableData = {
+            headers: [],
+            rows: []
+        };
+        const table = document.querySelector(".result-table");
+        if (table) {
+            // Get headers
+            const headers = [...table.querySelectorAll("thead th")].map(th => th.innerText);
+            tableData.headers = headers;
+
+            // Get rows
+            const rows = [...table.querySelectorAll("tbody tr")].map(tr =>
+                [...tr.querySelectorAll("td")].map(td => td.innerText)
+            );
+            tableData.rows = rows;
+        }
+
+        return JSON.stringify({
+            categoryValue,
+            categoryText,
+            policies,
+            resultTable: tableData
+        }, null, 2);
     }
 
     function maybeUploadToAirtable() {
@@ -125,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 fields: {
                     "fldyUDMDFno06AKQJ": name,
                     "fldlKmOW0yP5qhPzm": employeeID,
-                    "fldJadwSg4jzYRTnP": new Date().toISOString(),
+                    "fldJadwSg4jzYRTnP": new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }) + " Indian Standard Time",
                     "fldESWRTe5RCmqY1m": content
                 }
             }]
