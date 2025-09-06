@@ -49,7 +49,7 @@
       <div class="form-item">
         <label for="userName">Your Name:</label>
         <input type="text" id="userName" placeholder="Enter your name" class="input-field"
-          oninput="this.value = this.value.replace(/[^a-zA-Z]/g, '')">
+          oninput="this.value = this.value.replace(/[^a-zA-Z\s]/g, '')">
       </div>
       <div class="form-item">
         <label for="employeeID">Employee ID:</label>
