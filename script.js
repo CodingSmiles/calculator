@@ -463,6 +463,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 result = Math.round(result * 100) / 100;
             }
 
+            console.log(M3)
+
             wpcValueEl.textContent = (typeof result === "number") ? result.toLocaleString("en-IN") : "-";
             wpcPercentEl.textContent = (typeof percent === "number") ? percent + "%" : "-";
 
