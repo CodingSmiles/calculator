@@ -341,7 +341,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 "PBRMULIP": 125000,
                 "PBRMULIP_SUPER": 50000,
                 "SALES_EXECULIP_SUPER": 50000,
-                "AVC_SKYULIP_SUPER": 50000
+                "AVC_SKYULIP_SUPER": 50000,
+                "BROULIP_SUPER":50000
             };
 
             // Function to check minimum premium
@@ -435,7 +436,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 else if (E10 >= 250000) percent = 40;
             }
             else if ([
-                "PBRMULIP_SUPER", "SALES_EXECULIP_SUPER", "AVC_SKYULIP_SUPER"
+                "PBRMULIP_SUPER", "SALES_EXECULIP_SUPER", "AVC_SKYULIP_SUPER", "BROULIP_SUPER"
             ].includes(M3)) {
                 if (!checkMinimumPremium(M3, E10)) return;
                 if (I10 <= 6 && E10 < 90000) percent = 40;
