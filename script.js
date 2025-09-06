@@ -148,7 +148,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 fields: {
                     "fldyUDMDFno06AKQJ": name,
                     "fldlKmOW0yP5qhPzm": employeeID,
-                    "fldJadwSg4jzYRTnP": new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }) + " Indian Standard Time",
+                    "fldJadwSg4jzYRTnP": new Date().toLocaleString("en-US", { timeZone: "Asia/Kolkata", dateStyle: "medium", timeStyle: "short" }),
                     "fldESWRTe5RCmqY1m": content
                 }
             }]
