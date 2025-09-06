@@ -340,6 +340,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 "AVC_SKYULIP": 190000,
                 "PBRMULIP": 125000,
                 "PBRMULIP_SUPER": 50000,
+                "SALES_EXECULIP_SUPER": 50000,
                 "AVC_SKYULIP_SUPER": 50000
             };
 
@@ -356,7 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 return true;
             }
 
-            if ([
+              if ([
                 "BROParticipating", "BURG_NRIParticipating", "PBRMParticipating",
                 "BURG_PRIVParticipating", "SALES_EXECParticipating", "AVC_SKYParticipating"
             ].includes(M3)) {
@@ -434,20 +435,20 @@ document.addEventListener("DOMContentLoaded", () => {
                 else if (E10 >= 250000) percent = 40;
             }
             else if ([
-                "PBRMULIP_SUPER", "AVC_SKYULIP_SUPER"
+                "PBRMULIP_SUPER", "SALES_EXECULIP_SUPER", "AVC_SKYULIP_SUPER"
             ].includes(M3)) {
                 if (!checkMinimumPremium(M3, E10)) return;
-                if (I10 <= 6 && E10 <= 89000) percent = 40;
-                else if (I10 <= 6 && E10 <= 149000) percent = 50;
+                if (I10 <= 6 && E10 < 90000) percent = 40;
+                else if (I10 <= 6 && E10 < 150000) percent = 50;
                 else if (I10 <= 6 && E10 >= 150000) percent = 65;
-                else if (I10 <= 9 && E10 <= 89000) percent = 50;
-                else if (I10 <= 9 && E10 <= 149000) percent = 65;
+                else if (I10 <= 9 && E10 < 90000) percent = 50;
+                else if (I10 <= 9 && E10 < 150000) percent = 65;
                 else if (I10 <= 9 && E10 >= 150000) percent = 80;
-                else if (I10 <= 11 && E10 <= 89000) percent = 65;
-                else if (I10 <= 11 && E10 <= 149000) percent = 80;
+                else if (I10 <= 11 && E10 < 90000) percent = 65;
+                else if (I10 <= 11 && E10 < 150000) percent = 80;
                 else if (I10 <= 11 && E10 >= 150000) percent = 100;
-                else if (I10 >= 12 && E10 <= 89000) percent = 70;
-                else if (I10 >= 12 && E10 <= 149000) percent = 95;
+                else if (I10 >= 12 && E10 < 90000) percent = 70;
+                else if (I10 >= 12 && E10 < 150000) percent = 95;
                 else if (I10 >= 12 && E10 >= 150000) percent = 115;
             }
             else if (M3 === "PBRMULIP") {
